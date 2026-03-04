@@ -1530,7 +1530,7 @@
       const disciplineEmoji = discipline === 'yoga' ? '🧘' : '🏋️';
       const disciplineText = discipline === 'yoga' ? 'Yoga' : 'Pilates';
       disciplineEl.textContent = `${disciplineEmoji} ${disciplineText}`;
-      disciplineEl.style.cursor = editMode ? 'pointer' : 'default';
+      disciplineEl.style.cursor = 'pointer';
 
       const editToggle = document.getElementById('editToggle');
       if (editMode) {
@@ -1583,7 +1583,7 @@
       const action = e.target.dataset.action || e.target.closest('[data-action]')?.dataset.action;
       if (!action) return;
 
-      const blockIdx = e.target.dataset.blockIdx ? parseInt(e.target.dataset.blockIdx) : null;
+      const blockIdx = e.target.dataset.blockIdx ? parseInt(e.target.dataseaset.blockIdx) : null;
       const stepIdx = e.target.dataset.stepIdx ? parseInt(e.target.dataset.stepIdx) : null;
 
       switch (action) {
@@ -1781,9 +1781,7 @@
     });
 
     document.getElementById('disciplineBadge').addEventListener('click', (e) => {
-      if (editMode) {
-        showDisciplineModal();
-      }
+      showDisciplineModal();
     });
 
     document.getElementById('newRoutineBtn').addEventListener('click', (e) => {
