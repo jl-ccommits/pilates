@@ -3,1048 +3,379 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Pilates Routines</title>
+<title>Mat Pilates Practice Guide</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
-
-  :root {
-    --bg: #f8f6f3; --card: #ffffff; --accent: #8b7d6b; --accent-dark: #5c5147;
-    --text: #2d2a26; --text-mid: #6b6560; --text-light: #9e9590;
-    --warm: #c9a87c; --warm-light: #f5ede3;
-    --sage: #7a9178; --sage-light: #e6efe5;
-    --rose: #b8878f; --rose-light: #f5e6e9;
-    --slate: #7e8e9a; --slate-light: #e4ebf0;
-    --clay: #b08968; --clay-light: #f0e4d8;
-    --mauve: #9b8aa6; --mauve-light: #ede6f2;
-    --edit-accent: #c4a882;
-    --shadow: 0 1px 8px rgba(0,0,0,0.04); --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
-    --radius: 14px;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',-apple-system,BlinkMacSystemFont,system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100dvh; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
-
-  .top-bar { position:fixed; top:0; left:0; right:0; height:3px; background:rgba(0,0,0,0.04); z-index:100; }
-  .top-bar-fill { height:100%; background:var(--sage); transition:width 0.4s ease; }
-  .top-bar.edit-active .top-bar-fill { background:var(--edit-accent); }
-
-  .header { padding:32px 20px 12px; text-align:center; position:relative; }
-  .header h1 { font-size:20px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent-dark); }
-  .header .subtitle { font-size:13px; color:var(--text-light); margin-top:6px; font-weight:400; letter-spacing:0.3px; }
-  .header-actions { display:flex; gap:8px; justify-content:center; margin-top:12px; }
-  .hdr-btn { width:36px; height:36px; border-radius:10px; border:1.5px solid rgba(0,0,0,0.08); background:var(--card); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; color:var(--text-mid); transition:all 0.2s; }
-  .hdr-btn.active { background:var(--edit-accent); color:#fff; border-color:var(--edit-accent); }
-
-  .edit-banner { display:none; text-align:center; padding:6px 16px; margin:0 16px 8px; background:var(--warm-light); border-radius:10px; font-size:12px; font-weight:600; color:var(--clay); letter-spacing:0.5px; }
-  .edit-banner.show { display:block; }
-
-  /* ── Library Screen ── */
-  .library-screen { display:block; }
-  .library-screen.hidden { display:none; }
-  .library-header { padding:40px 20px 8px; text-align:center; }
-  .library-header h1 { font-size:22px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent-dark); }
-  .library-header .subtitle { font-size:13px; color:var(--text-light); margin-top:6px; }
-  .library-list { padding:16px 16px 100px; }
-
-  .routine-card {
-    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
-    padding:18px 18px; margin-bottom:12px; display:flex; align-items:center; gap:14px;
-    cursor:pointer; transition:transform 0.15s; border:1.5px solid transparent; position:relative;
-  }
-  .routine-card:active { transform:scale(0.98); }
-  .routine-icon { width:50px; height:50px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
-  .routine-info { flex:1; min-width:0; }
-  .routine-info h3 { font-size:16px; font-weight:600; line-height:1.35; }
-  .routine-info .meta { font-size:12px; color:var(--text-light); margin-top:3px; }
-  .routine-actions { display:flex; gap:4px; flex-shrink:0; }
-  .routine-action-btn { width:32px; height:32px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:var(--bg); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; color:var(--text-light); }
-  .routine-action-btn:active { transform:scale(0.9); }
-  .routine-action-btn.del { color:var(--rose); }
-
-  .add-routine-btn {
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    padding:16px; margin:12px 0; border-radius:var(--radius); border:2px dashed rgba(0,0,0,0.1);
-    background:transparent; cursor:pointer; font-size:14px; font-weight:600;
-    color:var(--text-light); font-family:inherit; width:100%; transition:all 0.2s;
-  }
-  .add-routine-btn:active { background:rgba(0,0,0,0.02); }
-
-  /* ── Home (Blocks) Screen ── */
-  .home { padding:0 16px 100px; }
-  .home-screen { display:none; }
-  .home-screen.active { display:block; }
-
-  .block-card {
-    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
-    padding:16px 18px; margin-bottom:10px; display:flex; align-items:center; gap:14px;
-    cursor:pointer; transition:transform 0.15s; border:1.5px solid transparent; position:relative; overflow:hidden;
-  }
-  .block-card:active { transform:scale(0.98); }
-  .block-card.completed { border-color:var(--sage); opacity:0.75; }
-  .block-card.completed::before { content:''; position:absolute; top:0; left:0; bottom:0; width:3px; background:var(--sage); }
-  .block-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
-  .block-info { flex:1; min-width:0; }
-  .block-info h3 { font-size:14px; font-weight:600; line-height:1.35; }
-  .block-info .meta { font-size:11.5px; color:var(--text-light); margin-top:2px; }
-  .equip-tags { display:flex; gap:5px; margin-top:5px; flex-wrap:wrap; }
-  .equip-tag { font-size:10.5px; padding:2px 8px; border-radius:20px; font-weight:600; letter-spacing:0.3px; text-transform:uppercase; }
-  .block-card .arrow { color:var(--text-light); font-size:16px; flex-shrink:0; opacity:0.4; }
-  .block-card .check { display:none; font-size:16px; color:var(--sage); flex-shrink:0; }
-  .block-card.completed .arrow { display:none; }
-  .block-card.completed .check { display:block; }
-
-  .edit-controls { display:none; flex-shrink:0; gap:4px; align-items:center; }
-  .edit-active .edit-controls { display:flex; }
-  .edit-active .arrow, .edit-active .check { display:none !important; }
-  .edit-ctrl-btn { width:30px; height:30px; border-radius:8px; border:1px solid rgba(0,0,0,0.08); background:var(--bg); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; color:var(--text-mid); transition:all 0.15s; }
-  .edit-ctrl-btn:active { transform:scale(0.9); }
-  .edit-ctrl-btn.del { color:var(--rose); }
-
-  /* ── Exercise View ── */
-  .exercise-view { display:none; min-height:100dvh; flex-direction:column; }
-  .exercise-view.active { display:flex; }
-  .ev-top { padding:20px 20px 12px; display:flex; align-items:center; gap:12px; }
-  .ev-back { width:34px; height:34px; border-radius:10px; background:var(--card); border:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; color:var(--text-mid); flex-shrink:0; }
-  .ev-block-title { font-size:15px; font-weight:600; flex:1; }
-  .ev-mode-toggle { display:flex; background:rgba(0,0,0,0.04); border-radius:8px; overflow:hidden; flex-shrink:0; }
-  .ev-mode-btn { padding:6px 12px; font-size:12px; font-weight:600; border:none; cursor:pointer; background:transparent; color:var(--text-light); transition:all 0.2s; font-family:inherit; }
-  .ev-mode-btn.active { background:var(--card); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,0.08); border-radius:6px; }
-  .ev-equip-row { display:flex; gap:6px; padding:0 20px; margin-bottom:6px; }
-  .ev-  .list-item-detail { font-size:11px; color:var(--text-light); margin-top:2px; line-height:1.4; }
-  .list-item .badge { margin-right:6px; }
-
-  /* ─────── Modal Base ─────── */
-  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:200; align-items:flex-end; justify-content:center; }
-  .modal-overlay.show { display:flex; }
-  .modal-sheet { background:var(--bg); border-radius:20px 20px 0 0; width:100%; max-width:500px; max-height:75dvh; overflow-y:auto; padding:20px; animation:slideUp 0.25s ease; }
-  @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-  .modal-handle { width:40px; height:4px; background:rgba(0,0,0,0.15); border-radius:2px; margin:0 auto 20px; }
-  .modal-title { font-size:18px; font-weight:700; margin-bottom:20px; }
-
-  .form-group { margin-bottom:16px; }
-  .form-label { display:block; font-size:13px; font-weight:600; color:var(--accent-dark); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.4px; }
-  .form-input { width:100%; padding:11px 13px; border:1.5px solid rgba(0,0,0,0.1); border-radius:10px; font-size:14px; font-family:inherit; color:var(--text); background:var(--card); }
-  .form-input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 2px rgba(139,125,107,0.15); }
-  .form-textarea { resize:vertical; min-height:100px; }
-
-  .emoji-picker { display:flex; flex-wrap:wrap; gap:8px; }
-  .emoji-btn { width:44px; height:44px; border-radius:10px; border:1.5px solid rgba(0,0,0,0.08); background:var(--card); cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
-  .emoji-btn:active { transform:scale(0.9); }
-  .emoji-btn.selected { border-color:var(--accent); background:rgba(139,125,107,0.1); }
-
-  .badge-toggles { display:flex; flex-direction:column; gap:8px; }
-  .badge-toggle { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; border:1.5px solid rgba(0,0,0,0.06); background:var(--card); cursor:pointer; font-size:14px; font-weight:500; font-family:inherit; color:var(--text-mid); }
-  .badge-toggle:active { transform:scale(0.98); }
-  .badge-toggle.active { border-color:var(--sage); color:var(--sage); background:var(--sage-light); }
-  .modal-actions { display:flex; gap:10px; margin-top:20px; }
-  .modal-btn { flex:1; padding:13px; border-radius:12px; font-size:14px; font-weight:600; border:none; cursor:pointer; font-family:inherit; }
-  .modal-btn-cancel { background:var(--card); color:var(--text-mid); border:1.5px solid rgba(0,0,0,0.06); }
-  .modal-btn-save { background:var(--sage); color:#fff; }
-  .modal-btn-danger { background:var(--rose); color:#fff; }
-
-  /* Version panel */
-  .version-panel { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:flex-end; justify-content:center; }
-  .version-panel.show { display:flex; }
-  .version-sheet { background:var(--bg); border-radius:20px 20px 0 0; width:100%; max-width:500px; max-height:75dvh; overflow-y:auto; padding:20px; animation:slideUp 0.25s ease; }
-  .version-item { display:flex; align-items:center; gap:12px; padding:14px; margin-bottom:8px; background:var(--card); border-radius:12px; box-shadow:var(--shadow); }
-  .vi-info { flex:1; }
-  .vi-info .vi-label { font-size:14px; font-weight:600; }
-  .vi-info .vi-date { font-size:12px; color:var(--text-light); margin-top:2px; }
-  .vi-restore { padding:6px 14px; border-radius:8px; font-size:12px; font-weight:600; border:1.5px solid rgba(0,0,0,0.1); background:var(--card); cursor:pointer; font-family:inherit; color:var(--text-mid); }
-
-  /* ──── Routine settings modal extras ──── */
-  .routine-opts { display:flex; flex-direction:column; gap:8px; }
-  .routine-opt-btn {
-    display:flex; align-items:center; gap:12px; padding:14px 16px; border-radius:12px;
-    background:var(--card); border:1.5px solid rgba(0,0,0,0.06); cursor:pointer;
-    font-size:14px; font-weight:500; font-family:inherit; color:var(--text); width:100%;
-    transition:all 0.15s; text-align:left;
-  }
-  .routine-opt-btn:active { transform:scale(0.98); }
-  .routine-opt-btn.danger { color:var(--rose); }
-  .routine-opt-btn .opt-icon { font-size:18px; width:24px; text-align:center; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f0eb;color:#333;min-height:100vh;-webkit-tap-highlight-color:transparent}
+.top-bar{background:linear-gradient(135deg,#7c6f64,#a1887f);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.top-bar h1{font-size:20px;font-weight:600;flex:1}
+.back-btn{background:rgba(255,255,255,.2);border:none;color:#fff;font-size:22px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center}
+.back-btn.show{display:flex}
+.container{max-width:600px;margin:0 auto;padding:16px}
+.welcome{text-align:center;padding:40px 20px}
+.welcome h2{font-size:24px;color:#5d4037;margin-bottom:8px}
+.welcome p{color:#8d6e63;font-size:15px;margin-bottom:30px}
+.routine-card{background:#fff;border-radius:16px;padding:24px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);cursor:pointer;transition:transform .15s,box-shadow .15s;border-left:5px solid #a1887f}
+.routine-card:active{transform:scale(.98)}
+.routine-card h3{font-size:18px;color:#5d4037;margin-bottom:6px}
+.routine-card p{font-size:13px;color:#999}
+.block-list{display:flex;flex-direction:column;gap:10px;padding-bottom:100px}
+.block-card{background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 6px rgba(0,0,0,.05);cursor:pointer;transition:transform .15s;display:flex;align-items:center;gap:14px}
+.block-card:active{transform:scale(.98)}
+.block-num{background:linear-gradient(135deg,#a1887f,#8d6e63);color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
+.block-num.warmup{background:linear-gradient(135deg,#66bb6a,#43a047)}
+.block-num.cooldown{background:linear-gradient(135deg,#42a5f5,#1e88e5)}
+.block-info h4{font-size:16px;color:#5d4037;margin-bottom:3px}
+.block-info p{font-size:12px;color:#aaa}
+.block-note{font-size:12px;color:#a1887f;font-style:italic;margin-top:2px}
+.exercise-view{padding-bottom:100px}
+.exercise-header{background:#fff;border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.exercise-header h3{font-size:18px;color:#5d4037;margin-bottom:4px}
+.exercise-header p{font-size:13px;color:#999}
+.exercise-item{background:#fff;border-radius:12px;padding:16px 20px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.04);display:flex;align-items:center;gap:14px;cursor:pointer;transition:background .15s}
+.exercise-item.done{background:#f1f8e9}
+.exercise-item .check{width:28px;height:28px;border-radius:50%;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;transition:all .2s}
+.exercise-item.done .check{background:#66bb6a;border-color:#66bb6a;color:#fff}
+.exercise-item .ex-text{font-size:15px;color:#444;flex:1}
+.exercise-item.done .ex-text{color:#999;text-decoration:line-through}
+.exercise-item .ex-num{font-size:12px;color:#bbb;font-weight:600;min-width:22px}
+.progress-bar-wrap{background:#e0d6cc;height:6px;border-radius:3px;margin-top:12px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,#66bb6a,#43a047);border-radius:3px;transition:width .3s}
+.block-progress{background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:14px;box-shadow:0 1px 6px rgba(0,0,0,.05);position:sticky;top:68px;z-index:50}
+.block-progress .label{display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:6px}
+.completion{text-align:center;padding:60px 20px}
+.completion h2{font-size:28px;color:#43a047;margin-bottom:10px}
+.completion p{font-size:16px;color:#888;margin-bottom:30px}
+.btn{background:linear-gradient(135deg,#a1887f,#8d6e63);color:#fff;border:none;padding:14px 32px;border-radius:30px;font-size:16px;font-weight:600;cursor:pointer;transition:transform .15s}
+.btn:active{transform:scale(.96)}
+.transition-note{background:#fff8e1;border-radius:12px;padding:14px 18px;margin-bottom:8px;font-size:13px;color:#f57f17;border-left:4px solid #ffc107;font-style:italic}
 </style>
 </head>
 <body>
-
-<div class="top-bar" id="topBar"><div class="top-bar-fill" id="topBarFill"></div></div>
-
-<!-- ──── LIBRARY SCREEN ──── -->
-<div class="library-screen" id="libraryScreen">
-  <div class="library-header">
-    <h1>My Routines</h1>
-    <div class="subtitle" id="libSubtitle"></div>
-  </div>
-  <div class="library-list" id="libraryList"></div>
+<div class="top-bar">
+  <button class="back-btn" id="backBtn" onclick="goBack()">&#8592;</button>
+  <h1 id="topTitle">Pilates Practice Guide</h1>
 </div>
-
-<!-- ──── HOME (BLOCKS) SCREEN ──── -->
-<div class="home-screen" id="homeScreen">
-  <div class="header">
-    <h1 id="routineTitle"></h1>
-    <div class="subtitle" id="homeSubtitle"></div>
-    <div class="header-actions">
-      <button class="hdr-btn" onclick="goLibrary()" title="My Routines" style="font-size:13px">&#9664;</button>
-      <button class="hdr-btn" id="btnEdit" onclick="toggleEditMode()" title="Edit mode">&#9998;</button>
-      <button class="hdr-btn" id="btnVersions" onclick="openVersions()" title="Version history">&#128197;</button>
-    </div>
-  </div>
-  <div class="edit-banner" id="editBanner">EDIT MODE — tap blocks to edit, use arrows to reorder</div>
-  <div class="home" id="blockList"></div>
-  <div id="homeFooter"><div class="reset-bar"><button class="reset-btn" onclick="resetProgress()">Reset progress</button></div></div>
-</div>
-
-<!-- ──── EXERCISE VIEW ──── -->
-<div class="exercise-view" id="exerciseView">
-  <div class="ev-top">
-    <button class="ev-back" onclick="goHome()">&#8592;</button>
-    <div class="ev-block-title" id="evTitle"></div>
-    <div class="ev-mode-toggle">
-      <button class="ev-mode-btn active" id="btnModeCard" onclick="setMode('card')">Cards</button>
-      <button class="ev-mode-btn" id="btnModeList" onclick="setMode('list')">List</button>
-    </div>
-  </div>
-  <div class="ev-equip-row" id="evEquipRow"></div>
-  <div class="ev-progress"><div class="ev-progress-fill" id="evProgressFill"></div></div>
-  <div class="ev-progress-text" id="evProgressText"></div>
-  <div class="card-mode" id="cardMode">
-    <div class="ev-card" id="evCard">
-      <div class="step-emoji" id="evEmoji"></div>
-      <div class="step-name" id="evName"></div>
-      <div class="step-detail" id="evDetail"></div>
-      <div class="badge-row" id="evBadges"></div>
-    </div>
-  </div>
-  <div class="list-mode hidden" id="listMode"></div>
-  <div class="ev-nav" id="evNav">
-    <button class="ev-btn ev-btn-prev" id="btnPrev" onclick="prevStep()">Back</button>
-    <button class="ev-btn ev-btn-next" id="btnNext" onclick="nextStep()">Next</button>
-  </div>
-</div>
-
-<!-- ──── BLOCK EDIT VIEW ──── -->
-<div class="block-edit-view" id="blockEditView">
-  <div class="be-header">
-    <button class="ev-back" onclick="closeBlockEdit()">&#8592;</button>
-    <input class="be-title-input" id="beTitleInput" placeholder="Block title" />
-  </div>
-  <div class="be-equip-row" id="beEquipRow"></div>
-  <div class="be-exercises" id="beExercises"></div>
-</div>
-
-<!-- ──── COMPLETION ──── -->
-<div class="completion-screen" id="completionScreen">
-  <div class="done-icon">&#10024;</div>
-  <h2>Routine Complete</h2>
-  <p>All blocks finished. Beautiful practice.</p>
-  <button class="ev-btn ev-btn-done" onclick="goHome()">Back to Overview</button>
-</div>
-
-<!-- ──── Edit Exercise Modal ──── -->
-<div class="modal-overlay" id="exModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Edit Exercise</div>
-    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="exNameInput" /></div>
-    <div class="form-group"><label class="form-label">Details / Cues</label><textarea class="form-input form-textarea" id="exDetailInput"></textarea></div>
-    <div class="form-group"><label class="form-label">Emoji</label><div class="emoji-picker" id="emojiPicker"></div></div>
-    <div class="form-group"><label class="form-label">Badges</label><div class="badge-toggles" id="badgeToggles"></div></div>
-    <div class="modal-actions"><button class="modal-btn modal-btn-cancel" onclick="closeExModal()">Cancel</button><button class="modal-btn modal-btn-save" onclick="saveExModal()">Save</button></div>
-  </div>
-</div>
-
-<!-- ──── Version History ──── -->
-<div class="version-panel" id="versionPanel">
-  <div class="version-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Version History</div>
-    <div id="versionList"></div>
-    <div style="margin-top:12px"><button class="modal-btn modal-btn-cancel" onclick="closeVersions()" style="width:100%">Close</button></div>
-  </div>
-</div>
-
-<!-- ──── New Routine Modal ──── -->
-<div class="modal-overlay" id="newRoutineModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">New Routine</div>
-    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="newRoutineName" placeholder="e.g., Reformer Basics" /></div>
-    <div class="form-group">
-      <label class="form-label">Description</label>
-      <textarea class="form-input form-textarea" id="newRoutineDesc" placeholder="Brief description..."></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="closeNewRoutineModal()">Cancel</button>
-      <button class="modal-btn modal-btn-save" onclick="createNewRoutine()">Create</button>
-    </div>
-  </div>
-</div>
-
-<!-- ──── Block Edit Modal ──── -->
-<div class="modal-overlay" id="blockModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Edit Block</div>
-    <div class="form-group"><label class="form-label">Block Name</label><input class="form-input" id="blockNameInput" /></div>
-    <div class="form-group">
-      <label class="form-label">Equipment</label>
-      <div id="equipPicker" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Exercises</label>
-      <div id="blockExercisesInput"></div>
-      <button type="button" onclick="addExerciseField()" style="width:100%; padding:10px; margin-top:10px; border:1px dashed rgba(0,0,0,0.2); background:transparent; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; color:var(--text-light);">+ Add Exercise</button>
-    </div>
-    <div class="routine-opts">
-      <button class="routine-opt-btn danger" onclick="deleteBlock()"><span class="opt-icon">🗑️</span> Delete Block</button>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="closeBlockModal()">Cancel</button>
-      <button class="modal-btn modal-btn-save" onclick="saveBlock()">Save</button>
-    </div>
-  </div>
-</div>
+<div class="container" id="app"></div>
 
 <script>
-  // ════════════════════════════════════
-  // STORAGE AND CONFIGURATION
-  // ════════════════════════════════════
-  const MP3_BUCKET = 'https://a.pilatesmp3s.com/mp3s/';
-  const ROUTINES_KEY = 'mp3-routines';
-  const ACTIVE_ROUTINE_KEY = 'mp3-active-routine';
-  const PROGRESS_KEY = 'mp3-progress';
-  const EDIT_MODE_KEY = 'mp3-edit-mode';
-
-  let routines = [];
-  let activeRoutineId = null;
-  let isEditMode = false;
-  let currentScreen = 'library';
-  let currentBlockIndex = -1;
-  let currentStepIndex = -1;
-  let currentMode = 'card';
-  let selectedEquipment = [];
-
-  // ════════════════════════════════════
-  // LOAD & INITIALIZE
-  // ════════════════════════════════════
-  function loadRoutines() {
-    const stored = localStorage.getItem(ROUTINES_KEY);
-    routines = stored ? JSON.parse(stored) : getDefaultRoutines();
-    activeRoutineId = localStorage.getItem(ACTIVE_ROUTINE_KEY) || (routines.length > 0 ? routines[0].id : null);
-    renderLibrary();
-  }
-
-  function getDefaultRoutines() {
-    return [
-      {
-        id: 'routine-1',
-        name: 'Morning Stretch',
-        desc: 'Gentle 10-minute flow to start your day',
-        duration: 10,
-        blocks: [
-          {
-            id: 'b1', title: 'Breathing', equipment: [],
-            exercises: [
-              { id: 'e1', name: 'Pillow Breathing', detail: '10 breaths, deep and slow', emoji: '🫁', badges: ['pulse'] },
-              { id: 'e2', name: 'Shoulder Rolls', detail: '10 forward, 10 back', emoji: '⭕', badges: [] }
-            ]
-          },
-          {
-            id: 'b2', title: 'Spine Mobility', equipment: ['mat'],
-            exercises: [
-              { id: 'e3', name: 'Cat-Cow', detail: 'Flow with your breath', emoji: '🐱', badges: ['flow'] },
-              { id: 'e4', name: 'Spinal Twist', detail: 'Hold 3-5 breaths each side', emoji: '🌀', badges: ['hold', 'side'] }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'routine-2',
-        name: 'Core Power',
-        desc: '20-minute mat intensifier',
-        duration: 20,
-        blocks: [
-          { id: 'b3', title: 'Warm-Up', equipment: [],
-            exercises: [
-              { id: 'e5', name: 'Pulse Ups', detail: '30 small pulses', emoji: '📈', badges: ['pulse'] },
-              { id: 'e6', name: 'Pelvic Tilts', detail: '15 reps', emoji: '⬆️', badges: [] }
-            ] },
-          { id: 'b4', title: 'Crunch Series', equipment: ['mat'],
-            exercises: [
-              { id: 'e7', name: 'Curl Ups', detail: '3x12 reps', emoji: '💪', badges: [] },
-              { id: 'e8', name: 'Oblique Crunches', detail: 'Alternate sides, 3x10', emoji: '🔁', badges: ['side', 'repeat'] }
-            ] },
-          { id: 'b5', title: 'Transitions', equipment: [],
-            exercises: [
-              { id: 'e9', name: 'Rollover', detail: 'Use momentum, 3 reps', emoji: '🔄', badges: ['transition'] }
-            ], isTransition: true }
-        ]
-      }
-    ];
-  }
-
-  // ════════════════════════════════════
-  // LIBRARY SCREEN
-  // ════════════════════════════════════
-  function renderLibrary() {
-    const screen = document.getElementById('libraryScreen');
-    const list = document.getElementById('libraryList');
-    const subtitle = document.getElementById('libSubtitle');
-
-    if (currentScreen !== 'library') screen.classList.add('hidden');
-    else screen.classList.remove('hidden');
-
-    subtitle.textContent = routines.length + ' routine' + (routines.length !== 1 ? 's' : '');
-
-    list.innerHTML = (routines.length === 0 ? '<div style="text-align:center; padding:40px 20px; color:var(--text-light);">No routines yet. Create one!</div>' : '') + routines.map(r => `
-      <div class="routine-card" onclick="selectRoutine('${r.id}')">
-        <div class="routine-icon" style="background:var(--warm-light);">🧘</div>
-        <div class="routine-info">
-          <h3>${r.name}</h3>
-          <div class="meta">${r.duration} min • ${r.blocks.length} blocks</div>
-        </div>
-        <div class="routine-actions">
-          <button class="routine-action-btn" onclick="event.stopPropagation();editRoutine('${r.id}')" title="Edit">✎</button>
-          <button class="routine-action-btn del" onclick="event.stopPropagation();deleteRoutine('${r.id}')" title="Delete">✕</button>
-        </div>
-      </div>
-    `).join('') + `
-      <button class="add-routine-btn" onclick="openNewRoutineModal()">+ New Routine</button>
-    `;
-  }
-
-  function selectRoutine(id) {
-    activeRoutineId = id;
-    localStorage.setItem(ACTIVE_ROUTINE_KEY, id);
-    goHome();
-  }
-
-  function editRoutine(id) {
-    alert('Edit routine: ' + id);
-  }
-
-  function deleteRoutine(id) {
-    if (confirm('Delete routine?')) {
-      routines = routines.filter(r => r.id !== id);
-      localStorage.setItem(ROUTINES_KEY, JSON.stringify(routines));
-      renderLibrary();
+const ROUTINE = {
+  name: "Mat Pilates",
+  equipment: "Mat, Ball, Band, Light Weights",
+  blocks: [
+    {
+      title: "Warm-up",
+      type: "warmup",
+      exercises: [
+        "Seated cross-legged, hand at heart and hand at belly",
+        "Seated cat/cow",
+        "Rolls L & R",
+        "Cat/cow again",
+        "Side arm stretch/twist R & L"
+      ]
+    },
+    {
+      title: "Block 1: Seated Ball Work with Weights",
+      note: "Ball behind back, feet flat on mat",
+      exercises: [
+        "Full range curl with hands at chest",
+        "Pulses with hands at chest",
+        "Arms extended out, full range",
+        "Pulses with arms extended",
+        "Twist right, full range",
+        "Hold the twist, pulse",
+        "Add right leg lift as you twist, full range",
+        "Pulse with right leg up, hold twist",
+        "Extend arms and knee as you hold the twist",
+        "Pulse with leg and arms extended",
+        "Hold wide"
+      ],
+      footNote: "Repeat on left side — start with the center work too!"
+    },
+    {
+      title: "Block 2: Band Around Knees + Weights",
+      note: "Transition: remove ball, grab band. Band around knees, weights by side.",
+      exercises: [
+        "Arms extended overhead with weights",
+        "Full range bridge pose",
+        "2 counts up, 2 counts down",
+        "Pulses",
+        "Add skull crushers with weights as you drop glutes down",
+        "Hold weights high",
+        "Knees push out on band, full range",
+        "Pulses",
+        "Tap right and lift, tap left and lift",
+        "Circles right",
+        "Circles left",
+        "End with full range",
+        "Pulses",
+        "Hold at top"
+      ]
+    },
+    {
+      title: "Block 3: Tabletop Glute Series — Right Side",
+      note: "Band/Ball. Place ball under left hand.",
+      exercises: [
+        "Donkey kicks with left leg, full range",
+        "Up an inch, down an inch",
+        "Pulses",
+        "Hold donkey kick — tricep pushup with hand on ball, full range",
+        "Tricep pushup pulses",
+        "Extend arm and leg",
+        "Hold and pulse back in",
+        "Come back to palm on ball, rainbows R & L",
+        "Full range lift",
+        "Pulses",
+        "Elbow to knee and extend",
+        "Taps to corner of mat and lift — end with hold"
+      ]
+    },
+    {
+      title: "Block 4: Standing Glute Series — Right Side",
+      note: "Band/Ball",
+      exercises: [
+        "Full range lunge — lift and lower in lunge, with hinge",
+        "Single pulses",
+        "Lift/lower front heel",
+        "Warrior 3 — tap and lift",
+        "Warrior 3 pulses",
+        "Back to lunge, full range twists",
+        "Hold twist and pulse",
+        "Flow: lunge → inhale warrior 3 lift arms → exhale twist → back to lunge"
+      ]
+    },
+    {
+      title: "Block 5: Core/Arm Series — R & L Together",
+      note: "Transition: Standing mountain knee drives with ball, come down to high plank.",
+      exercises: [
+        "High plank — knee drives / toe taps x3",
+        "Serve the platter, both arms",
+        "Alternate serves R & L",
+        "Hold out, pulse",
+        "Flip up and down",
+        "Over under",
+        "Open wide — repeat with arms out",
+        "End with a hold"
+      ]
+    },
+    {
+      title: "Block 6: Tabletop Glute Series — Left Side",
+      note: "Repeat Block 3 on left side",
+      isRepeat: true,
+      repeatOf: 3,
+      exercises: [
+        "Donkey kicks with right leg, full range",
+        "Up an inch, down an inch",
+        "Pulses",
+        "Hold donkey kick — tricep pushup with hand on ball, full range",
+        "Tricep pushup pulses",
+        "Extend arm and leg",
+        "Hold and pulse back in",
+        "Come back to palm on ball, rainbows R & L",
+        "Full range lift",
+        "Pulses",
+        "Elbow to knee and extend",
+        "Taps to corner of mat and lift — end with hold"
+      ]
+    },
+    {
+      title: "Block 7: Standing Glute Series — Left Side",
+      note: "Repeat Block 4 on left side",
+      isRepeat: true,
+      repeatOf: 4,
+      exercises: [
+        "Full range lunge — lift and lower in lunge, with hinge",
+        "Single pulses",
+        "Lift/lower front heel",
+        "Warrior 3 — tap and lift",
+        "Warrior 3 pulses",
+        "Back to lunge, full range twists",
+        "Hold twist and pulse",
+        "Flow: lunge → inhale warrior 3 lift arms → exhale twist → back to lunge"
+      ]
+    },
+    {
+      title: "Block 8: Sideline — Right Side",
+      note: "Transition: Side plank high L to R, land on left side",
+      exercises: [
+        "Up for 3, down fast",
+        "Up fast, down for 3",
+        "Pulses for 8",
+        "Circles front/back",
+        "Pulses",
+        "Back leg flat to back of mat — front leg extends, raises full range",
+        "Pulses",
+        "Teaser lifts",
+        "Teaser pulses",
+        "Back leg goes in front of mat — inner thigh",
+        "Full range",
+        "Pulses",
+        "Circles front and back",
+        "Swings forward and back",
+        "Teaser lifts — hold full teaser to finish"
+      ]
+    },
+    {
+      title: "Block 9: Sideline — Left Side",
+      note: "Transition: Side plank high L to R, land on right side. Repeat Block 8.",
+      isRepeat: true,
+      repeatOf: 8,
+      exercises: [
+        "Up for 3, down fast",
+        "Up fast, down for 3",
+        "Pulses for 8",
+        "Circles front/back",
+        "Pulses",
+        "Back leg flat to back of mat — front leg extends, raises full range",
+        "Pulses",
+        "Teaser lifts",
+        "Teaser pulses",
+        "Back leg goes in front of mat — inner thigh",
+        "Full range",
+        "Pulses",
+        "Circles front and back",
+        "Swings forward and back",
+        "Teaser lifts — hold full teaser to finish"
+      ]
+    },
+    {
+      title: "Block 10: Final Core & Stretch",
+      type: "cooldown",
+      exercises: [
+        "Hip lifts x8",
+        "Pulses up x16",
+        "Pulses with legs down x16",
+        "Low hold",
+        "Stretch — side twists",
+        "Happy baby",
+        "Glute bridge",
+        "Bound angle",
+        "Savasana — rest"
+      ]
     }
-  }
+  ]
+};
 
-  // ════════════════════════════════════
-  // HOME SCREEN (BLOCKS)
-  // ════════════════════════════════════
-  function goHome() {
-    currentScreen = 'home';
-    currentBlockIndex = -1;
-    currentStepIndex = -1;
-    renderHome();
-  }
+let currentScreen = 'home';
+let currentBlock = -1;
+let checked = {};
 
-  function renderHome() {
-    const screen = document.getElementById('homeScreen');
-    const routine = routines.find(r => r.id === activeRoutineId);
-    
-    if (!routine) return goLibrary();
-    
-    if (currentScreen !== 'home') screen.classList.remove('active');
-    else screen.classList.add('active');
+function getStorageKey() { return 'pilates_checked_v2'; }
+function loadChecked() { try { checked = JSON.parse(localStorage.getItem(getStorageKey()) || '{}'); } catch(e) { checked = {}; } }
+function saveChecked() { try { localStorage.setItem(getStorageKey(), JSON.stringify(checked)); } catch(e) {} }
 
-    document.getElementById('routineTitle').textContent = routine.name;
-    document.getElementById('homeSubtitle').textContent = routine.duration + ' min';
-    document.getElementById('editBanner').classList.toggle('show', isEditMode);
+function getTotalExercises() { return ROUTINE.blocks.reduce((s, b) => s + b.exercises.length, 0); }
+function getTotalDone() { let c = 0; ROUTINE.blocks.forEach((b, bi) => b.exercises.forEach((_, ei) => { if (checked[bi + '_' + ei]) c++; })); return c; }
+function getBlockDone(bi) { let c = 0; ROUTINE.blocks[bi].exercises.forEach((_, ei) => { if (checked[bi + '_' + ei]) c++; }); return c; }
 
-    const blockList = document.getElementById('blockList');
-    blockList.innerHTML = routine.blocks.map((block, i) => `
-      <div class="block-card ${isEditMode ? 'edit-active' : ''} ${isProgressComplete(block.id) ? 'completed' : ''}" onclick="!isEditMode && startBlock(${i})">
-        <div class="block-icon" style="background:var(--warm-light);">🔷</div>
-        <div class="block-info">
-          <h3>${block.title}</h3>
-          <div class="meta">${block.exercises.length} exercise${block.exercises.length !== 1 ? 's' : ''}</div>
-          ${block.equipment.length > 0 ? '<div class="equip-tags">' + block.equipment.map(e => `<span class="equip-tag" style="background:var(--slate-light); color:var(--slate);">${e}</span>`).join('') + '</div>' : ''}
-        </div>
-        <span class="arrow">›</span>
-        <span class="check">✓</span>
-        ${isEditMode ? `<div class="edit-controls">
-          <button class="edit-ctrl-btn" onclick="event.stopPropagation();editBlock(${i})">✎</button>
-          <button class="edit-ctrl-btn del" onclick="event.stopPropagation();deleteBlock(${i})">✕</button>
-          ${i > 0 ? `<button class="edit-ctrl-btn" onclick="event.stopPropagation();moveBlock(${i},-1)">▲</button>` : ''}
-          ${i < routine.blocks.length - 1 ? `<button class="edit-ctrl-btn" onclick="event.stopPropagation();moveBlock(${i},1)">▼</button>` : ''}
-        </div>` : ''}
+function render() {
+  const app = document.getElementById('app');
+  const backBtn = document.getElementById('backBtn');
+  const title = document.getElementById('topTitle');
+
+  if (currentScreen === 'home') {
+    backBtn.classList.remove('show');
+    title.textContent = 'Pilates Practice Guide';
+    const total = getTotalExercises();
+    const done = getTotalDone();
+    const pct = total ? Math.round(done / total * 100) : 0;
+    app.innerHTML = `
+      <div class="welcome">
+        <h2>Ready to Practice</h2>
+        <p>Tap your routine to get started</p>
       </div>
-    `).join('');
-  }
+      <div class="routine-card" onclick="openRoutine()">
+        <h3>${ROUTINE.name}</h3>
+        <p>${ROUTINE.blocks.length} blocks &middot; ${total} exercises &middot; ${ROUTINE.equipment}</p>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        <p style="margin-top:8px;font-size:12px;color:#aaa">${done}/${total} completed (${pct}%)</p>
+      </div>
+      ${done > 0 ? '<div style="text-align:center;margin-top:20px"><button class="btn" style="background:#e57373;font-size:14px;padding:10px 24px" onclick="resetAll()">Reset Progress</button></div>' : ''}
+    `;
+  } else if (currentScreen === 'blocks') {
+    backBtn.classList.add('show');
+    title.textContent = ROUTINE.name;
+    let html = '<div class="block-list">';
+    ROUTINE.blocks.forEach((block, i) => {
+      const done = getBlockDone(i);
+      const total = block.exercises.length;
+      const pct = total ? Math.round(done / total * 100) : 0;
+      const numClass = block.type === 'warmup' ? 'warmup' : block.type === 'cooldown' ? 'cooldown' : '';
+      const label = block.type === 'warmup' ? '\u2600' : block.type === 'cooldown' ? '\u2744' : (i);
+      html += `
+        <div class="block-card" onclick="openBlock(${i})">
+          <div class="block-num ${numClass}">${label}</div>
+          <div class="block-info" style="flex:1">
+            <h4>${block.title}</h4>
+            <p>${total} exercises${block.isRepeat ? ' (repeat)' : ''} &middot; ${done}/${total}</p>
+            ${block.note ? '<div class="block-note">' + block.note + '</div>' : ''}
+            <div class="progress-bar-wrap" style="margin-top:8px"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+    app.innerHTML = html;
+  } else if (currentScreen === 'exercises') {
+    backBtn.classList.add('show');
+    const block = ROUTINE.blocks[currentBlock];
+    title.textContent = block.title;
+    const done = getBlockDone(currentBlock);
+    const total = block.exercises.length;
+    const pct = total ? Math.round(done / total * 100) : 0;
 
-  function startBlock(blockIndex) {
-    currentBlockIndex = blockIndex;
-    currentStepIndex = 0;
-    currentScreen = 'exercise';
-    renderExerciseView();
-  }
-
-  // ════════════════════════════════════
-  // EXERCISE VIEW
-  // ════════════════════════════════════
-  function renderExerciseView() {
-    const routine = routines.find(r => r.id === activeRoutineId);
-    const block = routine.blocks[currentBlockIndex];
-    const exercise = block.exercises[currentStepIndex];
-    
-    document.getElementById('exerciseView').classList.toggle('active', currentScreen === 'exercise');
-    document.getElementById('evTitle').textContent = block.title;
-    document.getElementById('evEmoji').textContent = exercise.emoji;
-    document.getElementById('evName').textContent = exercise.name;
-    document.getElementById('evDetail').textContent = exercise.detail;
-    
-    const fillPercent = ((currentStepIndex + 1) / block.exercises.length) * 100;
-    document.getElementById('evProgressFill').style.width = fillPercent + '%';
-    document.getElementById('evProgressText').textContent = (currentStepIndex + 1) + ' / ' + block.exercises.length;
-    
-    document.getElementById('evBadges').innerHTML = exercise.badges.map(b => {
-      const badgeClass = 'badge-' + b;
-      return `<div class="badge ${badgeClass}">${b}</div>`;
-    }).join('');
-
-    document.getElementById('btnPrev').disabled = currentStepIndex === 0 && currentBlockIndex === 0;
-    document.getElementById('btnNext').disabled = currentStepIndex === block.exercises.length - 1 && currentBlockIndex === routine.blocks.length - 1;
-  }
-
-  function nextStep() {
-    const routine = routines.find(r => r.id === activeRoutineId);
-    const block = routine.blocks[currentBlockIndex];
-    
-    if (currentStepIndex < block.exercises.length - 1) {
-      currentStepIndex++;
-    } else if (currentBlockIndex < routine.blocks.length - 1) {
-      currentBlockIndex++;
-      currentStepIndex = 0;
+    let html = '';
+    if (done === total) {
+      html += `<div class="completion"><h2>\u2705 Block Complete!</h2><p>Great work on ${block.title}</p>
+        <button class="btn" onclick="nextBlock()" style="margin-bottom:12px">${currentBlock < ROUTINE.blocks.length - 1 ? 'Next Block \u2192' : 'Back to Overview'}</button>
+        <br><button class="btn" style="background:#e57373;font-size:14px;padding:10px 24px;margin-top:12px" onclick="resetBlock(${currentBlock})">Redo Block</button></div>`;
     } else {
-      markBlockComplete(block.id);
-      showCompletion();
-      return;
+      html += `<div class="block-progress"><div class="label"><span>${block.title}</span><span>${done}/${total}</span></div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div></div>`;
+      if (block.note) html += `<div class="transition-note">${block.note}</div>`;
+      if (block.footNote) html += `<div class="transition-note" style="border-left-color:#a1887f;color:#8d6e63">${block.footNote}</div>`;
+      html += '<div class="exercise-view">';
+      block.exercises.forEach((ex, ei) => {
+        const key = currentBlock + '_' + ei;
+        const isDone = checked[key];
+        html += `<div class="exercise-item ${isDone ? 'done' : ''}" onclick="toggleEx(${currentBlock},${ei})">
+          <div class="ex-num">${ei + 1}</div>
+          <div class="check">${isDone ? '\u2713' : ''}</div>
+          <div class="ex-text">${ex}</div>
+        </div>`;
+      });
+      html += '</div>';
     }
-    renderExerciseView();
+    app.innerHTML = html;
   }
-
-  function prevStep() {
-    if (currentStepIndex > 0) {
-      currentStepIndex--;
-    } else if (currentBlockIndex > 0) {
-      currentBlockIndex--;
-      const block = routines.find(r => r.id === activeRoutineId).blocks[currentBlockIndex];
-      currentStepIndex = block.exercises.length - 1;
-    }
-    renderExerciseView();
-  }
-
-  function goHome() {
-    currentScreen = 'home';
-    renderHome();
-  }
-
-  function goLibrary() {
-    currentScreen = 'library';
-    renderLibrary();
-  }
-
-  function showCompletion() {
-    currentScreen = 'completion';
-    document.getElementById('completionScreen').style.display = 'flex';
-    setTimeout(() => goHome(),1800);
-  }
-
-  // ════════════════════════════════════
-  // EDIT MODE & MODALS
-  // ════════════════════════════════════
-  function toggleEditMode() {
-    isEditMode = !isEditMode;
-    document.getElementById('btnEdit').classList.toggle('active', isEditMode);
-    renderHome();
-  }
-
-  function saveEditMode() {
-    isEditMode = false;
-    document.getElementById('btnEdit').classList.remove('active');
-    localStorage.setItem(ROUTINES_KEY, JSON.stringify(routines));
-    renderHome();
-  }
-
-  function cancelEditMode() {
-    isEditMode = false;
-    renderHome();
-  }
-
-  function openNewRoutineModal() {
-    document.getElementById('newRoutineModal').classList.add('show');
-  }
-
-  function closeNewRoutineModal() {
-    document.getElementById('newRoutineModal').classList.remove('show');
-  }
-
-  function createNewRoutine() {
-    const name = document.getElementById('newRoutineName').value;
-    const desc = document.getElementById('newRoutineDesc').value;
-    if (!name) return alert('Enter routine name');
-    routines.push({
-      id: 'routine-' + Date.now(),
-      name,
-      desc,
-      duration: 20,
-      blocks: []
-    });
-    localStorage.setItem(ROUTINES_KEY, JSON.stringify(routines));
-    closeNewRoutineModal();
-    renderLibrary();
-  }
-
-  function openVersions() {
-    document.getElementById('versionPanel').classList.add('show');
-    const vk = 'mp3-versions-' + activeRoutineId;
-    const versions = JSON.parse(localStorage.getItem(vk) || '[]');
-    document.getElementById('versionList').innerHTML = versions.slice(-5).reverse().map((v, i) => `
-      <div class="version-item">
-        <div class="vi-info">
-          <div class="vi-label">Version ${versions.length - i}</div>
-          <div class="vi-date">${new Date(v.timestamp).toLocaleString()}</div>
-        </div>
-        <button class="vi-restore" onclick="restoreVersion(${versions.length - i - 1})">Restore</button>
-      </div>
-    `).join('') || '<div style="padding:20px; text-align:center; color:var(--text-light);">No versions yet</div>';
-  }
-
-  function closeVersions() {
-    document.getElementById('versionPanel').classList.remove('show');
-  }
-
-  function restoreVersion(idx) {
-    alert('Restore version: ' + idx);
-  }
-
-  function editBlock(idx) {
-    alert('Edit block: ' + idx);
-  }
-
-  function deleteBlock(idx) {
-    if (confirm('Delete this block?')) {
-      const routine = routines.find(r => r.id === activeRoutineId);
-      routine.blocks.splice(idx, 1);
-      localStorage.setItem(ROUTINES_KEY, JSON.stringify(routines));
-      renderHome();
-    }
-  }
-
-  function moveBlock(i, dir) {
-    const routine = routines.find(r => r.id === activeRoutineId);
-    const newIdx = i + dir;
-    if (newIdx >= 0 && newIdx < routine.blocks.length) {
-      [routine.blocks[i], routine.blocks[newIdx]] = [routine.blocks[newIdx], routine.blocks[i]];
-      localStorage.setItem(ROUTINES_KEY, JSON.stringify(routines));
-      renderHome();
-    }
-  }
-
-  function setMode(mode) {
-    currentMode = mode;
-    document.querySelectorAll('.ev-mode-btn').forEach(btn => btn.classList.remove('active'));
-    if (mode === 'card') document.getElementById('btnModeCard').classList.add('active');
-    else document.getElementById('btnModeList').classList.add('active');
-  }
-
-  function isProgressComplete(blockId) {
-    const progress = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
-    return progress[blockId] === true;
-  }
-
-  function markBlockComplete(blockId) {
-    const progress = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
-    progress[blockId] = true;
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
-  }
-
-  function resetProgress() {
-    if (confirm('Reset all progress?')) {
-      localStorage.removeItem(PROGRESS_KEY);
-      renderHome();
-    }
-  }
-
-  // Close modals on overlay click
-  ['exModal','versionPanel','newRoutineModal','blockModal'].forEach(id => {
-    const modal = document.getElementById(id);
-    if (modal) modal.addEventListener('click', e => {
-      if (e.target === modal) modal.classList.remove('show');
-    });
-  });
-
-  function closeExModal() { document.getElementById('exModal').classList.remove('show'); }
-  function saveExModal() { closeExModal(); }
-  function addExerciseField() {}
-
-  loadRoutines();
-  renderLibrary();
-</script>
-top-bar" id="topBar"><div class="top-bar-fill" id="topBarFill"></div></div>
-
-<!-- ──── LIBRARY SCREEN ──── -->
-<div class="library-screen" id="libraryScreen">
-  <div class="library-header">
-    <h1>My Routines</h1>
-    <div class="subtitle" id="libSubtitle"></div>
-  </div>
-  <div class="library-list" id="libraryList"></div>
-</div>
-
-<!-- ──── HOME (BLOCKS) SCREEN ──── -->
-<div class="home-screen" id="homeScreen">
-  <div class="header">
-    <h1 id="routineTitle"></h1>
-    <div class="subtitle" id="homeSubtitle"></div>
-    <div class="header-actions">
-      <button class="hdr-btn" onclick="goLibrary()" title="My Routines" style="font-size:13px">&#9664;</button>
-      <button class="hdr-btn" id="btnEdit" onclick="toggleEditMode()" title="Edit mode">&#9998;</button>
-      <button class="hdr-btn" id="btnVersions" onclick="openVersions()" title="Version history">&#128197;</button>
-    </div>
-  </div>
-  <div class="edit-banner" id="editBanner">EDIT MODE — tap blocks to edit, use arrows to reorder</div>
-  <div class="home" id="blockList"></div>
-  <div id="homeFooter"><div class="reset-bar"><button class="reset-btn" onclick="resetProgress()">Reset progress</button></div></div>
-</div>
-
-<!-- ──── EXERCISE VIEW ──── -->
-<div class="exercise-view" id="exerciseView">
-  <div class="ev-top">
-    <button class="ev-back" onclick="goHome()">&#8592;</button>
-    <div class="ev-block-title" id="evTitle"></div>
-    <div class="ev-mode-toggle">
-      <button class="ev-mode-btn active" id="btnModeCard" onclick="setMode('card')">Cards</button>
-      <button class="ev-mode-btn" id="btnModeList" onclick="setMode('list')">List</button>
-    </div>
-  </div>
-  <div class="ev-equip-row" id="evEquipRow"></div>
-  <div class="ev-progress"><div class="ev-progress-fill" id="evProgressFill"></div></div>
-  <div class="ev-progress-text" id="evProgressText"></div>
-  <div class="card-mode" id="cardMode">
-    <div class="ev-card" id="evCard">
-      <div class="step-emoji" id="evEmoji"></div>
-      <div class="step-name" id="evName"></div>
-      <div class="step-detail" id="evDetail"></div>
-      <div class="badge-row" id="evBadges"></div>
-    </div>
-  </div>
-  <div class="list-mode hidden" id="listMode"></div>
-  <div class="ev-nav" id="evNav">
-    <button class="ev-btn ev-btn-prev" id="btnPrev" onclick="prevStep()">Back</button>
-    <button class="ev-btn ev-btn-next" id="btnNext" onclick="nextStep()">Next</button>
-  </div>
-</div>
-
-<!-- ──── BLOCK EDIT VIEW ──── -->
-<div class="block-edit-view" id="blockEditView">
-  <div class="be-header">
-    <button class="ev-back" onclick="closeBlockEdit()">&#8592;</button>
-    <input class="be-title-input" id="beTitleInput" placeholder="Block title" />
-  </div>
-  <div class="be-equip-row" id="beEquipRow"></div>
-  <div class="be-exercises" id="beExercises"></div>
-</div>
-
-<!-- ──── COMPLETION ──── -->
-<div class="completion-screen" id="completionScreen">
-  <div class="done-icon">&#10024;</div>
-  <h2>Routine Complete</h2>
-  <p>All blocks finished. Beautiful practice.</p>
-  <button class="ev-btn ev-btn-done" onclick="goHome()">Back to Overview</button>
-</div>
-
-<!-- ──── Edit Exercise Modal ──── -->
-<div class="modal-overlay" id="exModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Edit Exercise</div>
-    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="exNameInput" /></div>
-    <div class="form-group"><label class="form-label">Details / Cues</label><textarea class="form-input form-textarea" id="exDetailInput"></textarea></div>
-    <div class="form-group"><label class="form-label">Emoji</label><div class="emoji-picker" id="emojiPicker"></div></div>
-    <div class="form-group"><label class="form-label">Badges</label><div class="badge-toggles" id="badgeToggles"></div></div>
-    <div class="modal-actions"><button class="modal-btn modal-btn-cancel" onclick="closeExModal()">Cancel</button><button class="modal-btn modal-btn-save" onclick="saveExModal()">Save</button></div>
-  </div>
-</div>
-
-<!-- ──── Version History ──── -->
-<div class="version-panel" id="versionPanel">
-  <div class="version-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Version History</div>
-    <div id="versionList"></div>
-    <div style="margin-top:12px"><button class="modal-btn modal-btn-cancel" onclick="closeVersions()" style="width:100%">Close</button></div>
-  </div>
-</div>
-
-<!-- ──── New Routine Modal ──── -->
-<div class="modal-overlay" id="newRoutineModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">New Routine</div>
-    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="newRoutineName" placeholder="e.g., Reformer Basics" /></div>
-    <div class="form-group">
-      <label class="form-label">Emoji</label>
-      <div class="emoji-picker" id="newRoutineEmojiPicker"></div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Start from</label>
-      <div id="newRoutineSource" style="display:flex;flex-direction:column;gap:6px"></div>
-    </div>
-    <div class="modal-actions"><button class="modal-btn modal-btn-cancel" onclick="closeNewRoutine()">Cancel</button><button class="modal-btn modal-btn-save" onclick="createNewRoutine()">Create</button></div>
-  </div>
-</div>
-
-<!-- ──── Routine Settings Modal ──── -->
-<div class="modal-overlay" id="routineSettingsModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="rsTitle">Routine Options</div>
-    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="rsNameInput" /></div>
-    <div class="form-group"><label class="form-label">Emoji</label><div class="emoji-picker" id="rsEmojiPicker"></div></div>
-    <div class="routine-opts" style="margin-top:16px">
-      <button class="routine-opt-btn" onclick="duplicateRoutine()"><span class="opt-icon">📋</span> Duplicate Routine</button>
-      <button class="routine-opt-btn danger" onclick="deleteRoutine()"><span class="opt-icon">🗑️</span> Delete Routine</button>
-    </div>
-    <div class="modal-actions"><button class="modal-btn modal-btn-cancel" onclick="closeRoutineSettings()">Cancel</button><button class="modal-btn modal-btn-save" onclick="saveRoutineSettings()">Save</button></div>
-  </div>
-</div>
-
-<!-- Floating Save -->
-<button class="float-save" id="floatSave" onclick="saveVersion()">Save Version</button>
-
-<script>
-// ════════════════════════════════ DEFAULT MAT PILATES ROUTINE ════════════════════════════════
-const DEFAULT_MAT_PILATES = [
-  {id:"warmup",title:"Warm-up",homeEmoji:"🌸",equipment:[],color:"var(--sage)",colorLight:"var(--sage-light)",steps:[
-    {name:"Seated Cross-Legged",detail:"Hand at heart, hand at belly. Find your breath.",emoji:"🌸"},
-    {name:"Seated Cat/Cow",detail:"Flow through spinal flexion and extension.",emoji:"🌊"},
-    {name:"Rolls L & R",detail:"Gentle lateral rolls, left and right.",emoji:"↔️"},
-    {name:"Cat/Cow Again",detail:"Repeat the seated cat/cow flow.",emoji:"🌊"},
-    {name:"Side Arm Stretch & Twist",detail:"Right and left sides. Open through the chest.",emoji:"🍟"}]},
-  {id:"block1",title:"Block 1 · Seated Ball Work + Weights",homeEmoji:"🧇",equipment:["ball","weights"],color:"var(--slate)",colorLight:"var(--slate-light)",steps:[
-    {name:"Full Range Curl — Hands at Chest",detail:"Ball behind back, feet flat on mat. Curl up and down through full range.",emoji:"✨"},
-    {name:"Pulses — Hands at Chest",detail:"Small pulse at the top of the curl.",emoji:"🔥",isPulse:true},
-    {name:"Full Range — Arms Extended",detail:"Same curl, arms extended out in front.",emoji:"✨"},
-    {name:"Pulses — Arms Extended",detail:"Pulse with arms extended.",emoji:"🔥",isPulse:true},
-    {name:"Twist Right — Full Range",detail:"Rotate to the right, full range curl.",emoji:"🌀",side:"R"},
-    {name:"Hold Twist + Pulse",detail:"Hold the right twist, pulse.",emoji:"🔥",isPulse:true,side:"R"},
-    {name:"Add Right Leg Lift + Twist",detail:"Lift right leg as you twist, full range.",emoji:"⬆️",side:"R"},
-    {name:"Pulse — Leg Up, Hold Twist",detail:"Pulse with right leg up, holding the twist.",emoji:"🔥",isPulse:true,side:"R"},
-    {name:"Extend Arms & Knee in Twist",detail:"Extend both arms and knee while holding the twist.",emoji:"✨"},
-    {name:"Pulse — Fully Extended",detail:"Pulse with everything extended.",emoji:"🔥",isPulse:true},
-    {name:"Hold Wide",detail:"Open wide and hold.",emoji:"💎",isHold:true},
-    {name:"Repeat on Left",detail:"Start with center work again, then full left side sequence.",emoji:"🔁",isRepeat:true,side:"L"}]},
-  {id:"t1",title:"Transition",homeEmoji:"🔄",equipment:["band"],color:"var(--mauve)",colorLight:"var(--mauve-light)",isTransition:true,steps:[
-    {name:"Equipment Swap",detail:"Remove ball, grab band. Band around knees, weights by side.",emoji:"🔄",isTransition:true}]},
-  {id:"block2",title:"Block 2 · Bridge Series — Band + Weights",homeEmoji:"🍑",equipment:["band","weights"],color:"var(--clay)",colorLight:"var(--clay-light)",steps:[
-    {name:"Arms Overhead with Weights",detail:"Extend arms over head holding weights.",emoji:"⬆️"},
-    {name:"Full Range Bridge",detail:"Full range bridge pose — lift and lower.",emoji:"✨"},
-    {name:"2 Up, 2 Down",detail:"2 counts to lift, 2 counts to lower.",emoji:"🏂"},
-    {name:"Pulses",detail:"Pulse at the top of the bridge.",emoji:"🔥",isPulse:true},
-    {name:"Add Skull Crushers",detail:"Repeat bridge + skull crushers with weights as glutes drop.",emoji:"✨"},
-    {name:"Hold Weights High",detail:"Lock arms extended, hold weights high.",emoji:"💎",isHold:true},
-    {name:"Knees Push Out on Band",detail:"Press knees out against the band, full range.",emoji:"↔️"},
-    {name:"Pulses — Knees Out",detail:"Pulse knees out against the band.",emoji:"🔥",isPulse:true},
-    {name:"Tap R + Lift, Tap L + Lift",detail:"Alternate toe taps with lifts.",emoji:"⬆️"},
-    {name:"Circles Right",detail:"Circle the hips to the right",detail:"Circle the hips to the right, controlled.",emoji:"🔵"},
-    {name:"Circles Left",detail:"Circle the hips to the left, controlled.",emoji:"🔵"},
-    {name:"Pulse \u2014 At Top of Bridge",detail:"Pulse with glutes at the top.",emoji:"🔥",isPulse:true},
-    {name:"High Plank \u2014 Knee Drives + Toe Taps",detail:"Hold high plank. Drive knees in, tap toes.",emoji:"💪"},
-    {name:"Hold Plank \u2014 Arms Extended",detail:"Extended arms, hold the plank position.",emoji:"💎",isHold:true},
-    {name:"Lower to Push-Up Position",detail:"Lower to push-up position and hold.",emoji:"⬇️"},
-    {name:"Tricep Dips",detail:"3x12 dips holding position.",emoji:"💪"},
-    {name:"Return to Bridge",detail:"Return to bridge and pulse at top.",emoji:"🌉"}]},
-  {id:"t2",title:"Transition",homeEmoji:"🔄",equipment:[],color:"var(--mauve)",colorLight:"var(--mauve-light)",isTransition:true,steps:[
-    {name:"Equipment Off",detail:"Remove band and weights. Lie flat on mat.",emoji:"🔄",isTransition:true}]},
-  {id:"block3",title:"Block 3 \u00b7 Mat Series",homeEmoji:"🧘",equipment:[],color:"var(--warm)",colorLight:"var(--warm-light)",steps:[
-    {name:"The Hundred",detail:"Pulses with arms lifting, 100 total.",emoji:"💯",isPulse:true},
-    {name:"Roll Up",detail:"Slow, controlled roll up from the spine.",emoji:"📜"},
-    {name:"Single Leg Circles",detail:"10 circles each leg, controlled.",emoji:"⭕"},
-    {name:"Rolling Like a Ball",detail:"5-8 rolls, massaging the spine.",emoji:"🎾"},
-    {name:"Single Leg Stretch",detail:"Alternate legs, 10 each side.",emoji:"🦵"},
-    {name:"Double Leg Stretch",detail:"Both legs at once, 10 reps.",emoji:"🦵"},
-    {name:"Straight Leg Stretch",detail:"Both legs straight, pulse 10 times.",emoji:"📏"},
-    {name:"Criss Cross",detail:"Rotation with leg work, 10 each side.",emoji:"❌"},
-    {name:"Spine Stretch Forward",detail:"Fold forward and roll back up.",emoji:"📐"},
-    {name:"Saw",detail:"Rotation with forward fold.",emoji:"🪚"},
-    {name:"Swan Prep",detail:"Extension prep, 5 reps.",emoji:"🦢"},
-    {name:"Shoulder Bridge",detail:"Bridge with shoulder support, hold 3 breaths.",emoji:"🌉",isHold:true},
-    {name:"Leg Pull Front",detail:"High plank with leg lift, alternate sides.",emoji:"⬆️"},
-    {name:"Leg Pull Back",detail:"Reverse plank with leg lift.",emoji:"⬆️"},
-    {name:"Teaser Prep",detail:"V-sit prep, 5 reps.",emoji:"✨"},
-    {name:"Seal",detail:"Clap heels together 3 times, 5 reps.",emoji:"🦭"}]},
-  {id:"t3",title:"Transition",homeEmoji:"🔄",equipment:[],color:"var(--mauve)",colorLight:"var(--mauve-light)",isTransition:true,steps:[
-    {name:"Reset & Breathe",detail:"Lie on back. Return to gentle breathing.",emoji:"🔄",isTransition:true}]},
-  {id:"cool",title:"Cool-Down",homeEmoji:"😌",equipment:[],color:"var(--rose)",colorLight:"var(--rose-light)",steps:[
-    {name:"Spinal Twist \u2014 Both Knees",detail:"Hold each side for 3-5 breaths.",emoji:"🌀",isHold:true},
-    {name:"Happy Baby",detail:"Hold and breathe into the stretch.",emoji:"👶",isHold:true},
-    {name:"Knees to Chest",detail:"Gentle hug of the legs.",emoji:"🤗",isHold:true},
-    {name:"Corpse Pose",detail:"Full relaxation, 1-2 minutes.",emoji:"😴",isHold:true,isTransition:false}
-  ]}
-];
-
-routines = [];
-let activeRoutine = null;
-isEditMode = false;
-currentScreen = null;
-let currentBlockIdx = -1;
-let currentStepIdx = -1;
-currentMode = 'card';
-
-function initApp() {
-  loadRoutines();
-  goLibrary();
 }
 
-function loadRoutines() {
-  const stored = localStorage.getItem('routines');
-  routines = stored ? JSON.parse(stored) : [
-    {id:'default-mat',name:'Mat Pilates',emoji:'🧘',blocks:DEFAULT_MAT_PILATES}
-  ];
-  activeRoutine = routines[0];
+function openRoutine() { currentScreen = 'blocks'; render(); window.scrollTo(0, 0); }
+function openBlock(i) { currentScreen = 'exercises'; currentBlock = i; render(); window.scrollTo(0, 0); }
+function goBack() {
+  if (currentScreen === 'exercises') { currentScreen = 'blocks'; }
+  else if (currentScreen === 'blocks') { currentScreen = 'home'; }
+  render(); window.scrollTo(0, 0);
+}
+function toggleEx(bi, ei) {
+  const key = bi + '_' + ei;
+  checked[key] = !checked[key];
+  saveChecked();
+  render();
+}
+function nextBlock() {
+  if (currentBlock < ROUTINE.blocks.length - 1) { currentBlock++; render(); }
+  else { currentScreen = 'blocks'; render(); }
+  window.scrollTo(0, 0);
+}
+function resetBlock(bi) {
+  ROUTINE.blocks[bi].exercises.forEach((_, ei) => { delete checked[bi + '_' + ei]; });
+  saveChecked(); render();
+}
+function resetAll() {
+  if (confirm('Reset all progress?')) { checked = {}; saveChecked(); render(); }
 }
 
-function saveRoutines() {
-  localStorage.setItem('routines',JSON.stringify(routines));
-}
-
-function goLibrary() {
-  currentScreen = 'library';
-  document.getElementById('libraryScreen').classList.remove('hidden');
-  document.getElementById('homeScreen').classList.remove('active');
-  document.getElementById('exerciseView').classList.remove('active');
-  renderLibrary();
-}
-
-function renderLibrary() {
-  const list = document.getElementById('libraryList');
-  list.innerHTML = routines.map(r => `
-    <div class="routine-card" onclick="selectRoutine('${r.id}')">
-      <div class="routine-icon" style="background:rgba(201,168,124,0.2)">${r.emoji || '🧘'}</div>
-      <div class="routine-info">
-        <h3>${r.name}</h3>
-        <div class="meta">${r.blocks.length} blocks</div>
-      </div>
-      <div class="routine-actions">
-        <button class="routine-action-btn" onclick="event.stopPropagation();openRoutineSettings('${r.id}')">⋯</button>
-      </div>
-    </div>
-  `).join('') + `
-    <button class="add-routine-btn" onclick="openNewRoutineModal()">+ New Routine</button>
-  `;
-}
-
-function selectRoutine(id) {
-  activeRoutine = routines.find(r => r.id === id);
-  goHome();
-}
-
-function goHome() {
-  currentScreen = 'home';
-  currentBlockIdx = -1;
-  currentStepIdx = -1;
-  document.getElementById('libraryScreen').classList.add('hidden');
-  document.getElementById('homeScreen').classList.add('active');
-  document.getElementById('exerciseView').classList.remove('active');
-  renderHome();
-}
-
-function renderHome() {
-  if (!activeRoutine) return goLibrary();
-  document.getElementById('routineTitle').textContent = activeRoutine.name;
-  document.getElementById('homeSubtitle').textContent = activeRoutine.blocks.length + ' blocks';
-  document.getElementById('editBanner').classList.toggle('show', isEditMode);
-  const blockList = document.getElementById('blockList');
-  blockList.innerHTML = activeRoutine.blocks.map((block, i) => {
-    const card = document.createElement('div');
-    card.className = 'block-card' + (block.isTransition ? ' transition' : '') + (isEditMode ? ' edit-active' : '');
-    card.onclick = () => !isEditMode && startBlock(i);
-    card.innerHTML = `
-      <div class="block-icon" style="background:${block.colorLight}">${block.homeEmoji || '🔷'}</div>
-      <div class="block-info">
-        <h3>${block.title}</h3>
-        <div class="meta">${block.steps.length} steps</div>
-      </div>
-      <span class="arrow">›</span>
-      ${isEditMode ? '<span class="edit-controls">✎ ✕</span>' : ''}
-    `;
-    return card;
-  }).reduce((a, b) => {a.appendChild(b); return a;}, blockList);
-}
-
-function startBlock(idx) {
-  currentBlockIdx = idx;
-  currentStepIdx = 0;
-  currentScreen = 'exercise';
-  renderExercise();
-}
-
-function renderExercise() {
-  if (!activeRoutine || currentBlockIdx < 0) return;
-  const block = activeRoutine.blocks[currentBlockIdx];
-  const step = block.steps[currentStepIdx];
-  document.getElementById('exerciseView').classList.add('active');
-  document.getElementById('evTitle').textContent = block.title;
-  document.getElementById('evEmoji').textContent = step.emoji;
-  document.getElementById('evName').textContent = step.name;
-  document.getElementById('evDetail').textContent = step.detail;
-  const pct = ((currentStepIdx + 1) / block.steps.length) * 100;
-  document.getElementById('evProgressFill').style.width = pct + '%';
-  document.getElementById('evProgressText').textContent = (currentStepIdx + 1) + ' / ' + block.steps.length;
-  document.getElementById('btnPrev').disabled = currentStepIdx === 0 && currentBlockIdx === 0;
-  document.getElementById('btnNext').disabled = currentStepIdx === block.steps.length - 1 && currentBlockIdx === activeRoutine.blocks.length - 1;
-}
-
-function nextStep() {
-  const block = activeRoutine.blocks[currentBlockIdx];
-  if (currentStepIdx < block.steps.length - 1) {
-    currentStepIdx++;
-  } else if (currentBlockIdx < activeRoutine.blocks.length - 1) {
-    currentBlockIdx++;
-    currentStepIdx = 0;
-  } else {
-    document.getElementById('completionScreen').style.display = 'flex';
-    setTimeout(() => goHome(), 1800);
-    return;
-  }
-  renderExercise();
-}
-
-function prevStep() {
-  if (currentStepIdx > 0) currentStepIdx--;
-  else if (currentBlockIdx > 0) {
-    currentBlockIdx--;
-    currentStepIdx = activeRoutine.blocks[currentBlockIdx].steps.length - 1;
-  }
-  renderExercise();
-}
-
-function goHome() { currentScreen = 'home'; goHome(); }
-function toggleEditMode() { isEditMode = !isEditMode; renderHome(); }
-function setMode(m) { currentMode = m; document.querySelectorAll('.ev-mode-btn').forEach(b => b.classList.remove('active')); document.getElementById(m === 'card' ? 'btnModeCard' : 'btnModeList').classList.add('active'); }
-function openVersions() { document.getElementById('versionPanel').classList.add('show'); }
-function closeVersions() { document.getElementById('versionPanel').classList.remove('show'); }
-function openNewRoutineModal() { document.getElementById('newRoutineModal').classList.add('show'); }
-function closeNewRoutine() { document.getElementById('newRoutineModal').classList.remove('show'); }
-function createNewRoutine() { closeNewRoutine(); }
-function openRoutineSettings(id) { document.getElementById('routineSettingsModal').classList.add('show'); }
-function closeRoutineSettings() { document.getElementById('routineSettingsModal').classList.remove('show'); }
-function saveRoutineSettings() { closeRoutineSettings(); }
-function duplicateRoutine() {}
-function deleteRoutine() {}
-function resetProgress() { if (confirm('Reset?')) location.reload(); }
-function saveVersion() {}
-function closeExModal() { document.getElementById('exModal').classList.remove('show'); }
-function saveExModal() { closeExModal(); }
-function closeBlockEdit() {}
-function addExerciseField() {}
-
-initApp();
-loadRoutines();
-renderLibrary();
+loadChecked();
+render();
 </script>
 </body>
 </html>
