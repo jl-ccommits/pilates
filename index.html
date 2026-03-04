@@ -3,666 +3,344 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Pilates Routines</title>
+<title>Mat Pilates Routine</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
   :root {
-    --bg: #f8f6f3; --card: #ffffff; --accent: #8b7d6b; --accent-dark: #5c5147;
-    --text: #2d2a26; --text-mid: #6b6560; --text-light: #9e9590;
-    --warm: #c9a87c; --warm-light: #f5ede3;
-    --sage: #7a9178; --sage-light: #e6efe5;
-    --rose: #b8878f; --rose-light: #f5e6e9;
-    --slate: #7e8e9a; --slate-light: #e4ebf0;
-    --clay: #b08968; --clay-light: #f0e4d8;
-    --mauve: #9b8aa6; --mauve-light: #ede6f2;
+    --bg: #f8f6f3;
+    --card: #ffffff;
+    --accent: #8b7d6b;
+    --accent-dark: #5c5147;
+    --text: #2d2a26;
+    --text-mid: #6b6560;
+    --text-light: #9e9590;
+    --warm: #c9a87c;
+    --warm-light: #f5ede3;
+    --sage: #7a9178;
+    --sage-light: #e6efe5;
+    --rose: #b8878f;
+    --rose-light: #f5e6e9;
+    --slate: #7e8e9a;
+    --slate-light: #e4ebf0;
+    --clay: #b08968;
+    --clay-light: #f0e4d8;
+    --mauve: #9b8aa6;
+    --mauve-light: #ede6f2;
     --edit-accent: #c4a882;
-    --shadow: 0 1px 8px rgba(0,0,0,0.04); --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
+    --shadow: 0 1px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
     --radius: 14px;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',-apple-system,BlinkMacSystemFont,system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100dvh; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
 
-  .top-bar { position:fixed; top:0; left:0; right:0; height:3px; background:rgba(0,0,0,0.04); z-index:100; }
-  .top-bar-fill { height:100%; background:var(--sage); transition:width 0.4s ease; }
-  .top-bar.edit-active .top-bar-fill { background:var(--edit-accent); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  .header { padding:32px 20px 12px; text-align:center; position:relative; }
-  .header h1 { font-size:20px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent-dark); }
-  .header .subtitle { font-size:13px; color:var(--text-light); margin-top:6px; font-weight:400; letter-spacing:0.3px; }
-  .header-actions { display:flex; gap:8px; justify-content:center; margin-top:12px; }
-  .header-actions button { padding:6px 14px; font-size:12px; border:none; border-radius:8px; cursor:pointer; font-weight:500; transition:all 0.2s; }
-  .header-actions .btn-primary { background:var(--warm); color:#fff; }
-  .header-actions .btn-primary:hover { background:var(--warm); transform:translateY(-1px); }
-  .header-actions .btn-secondary { background:transparent; border:1px solid var(--text-light); color:var(--text); }
-  .header-actions .btn-secondary:hover { background:var(--warm-light); border-color:var(--warm); }
-
-  .editor-bar { display:flex; align-items:center; justify-content:center; gap:16px; padding:16px; background:var(--warm-light); border-bottom:1px solid var(--warm); }
-  .editor-bar button { padding:8px 12px; font-size:12px; border:1px solid var(--warm); background:#fff; color:var(--accent-dark); border-radius:8px; cursor:pointer; font-weight:500; transition:all 0.2s; }
-  .editor-bar button:hover { background:var(--warm); color:#fff; }
-  .editor-bar button.active { background:var(--warm); color:#fff; }
-
-  .content { max-width:900px; margin:0 auto; padding:0 20px 40px; }
-  .routine-card { background:var(--card); border-radius:var(--radius); padding:24px; margin-bottom:20px; box-shadow:var(--shadow); transition:all 0.3s; border:1px solid rgba(0,0,0,0.02); }
-  .routine-card:hover { box-shadow:var(--shadow-md); }
-  .routine-card.edit-mode { border:2px solid var(--edit-accent); }
-
-  .routine-header { display:flex; align-items:start; justify-content:space-between; gap:16px; margin-bottom:16px; }
-  .routine-title { font-size:18px; font-weight:600; color:var(--accent-dark); }
-  .routine-difficulty { display:inline-block; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
-  .routine-difficulty.beginner { background:var(--sage-light); color:#5a7860; }
-  .routine-difficulty.intermediate { background:var(--warm-light); color:#8b6f47; }
-  .routine-difficulty.advanced { background:var(--rose-light); color:#8b5f6b; }
-
-  .routine-meta { display:flex; gap:12px; font-size:13px; color:var(--text-mid); margin-bottom:12px; }
-  .routine-meta-item { display:flex; align-items:center; gap:4px; }
-  .routine-meta-icon { font-size:14px; }
-
-  .routine-description { font-size:14px; color:var(--text-mid); line-height:1.6; margin-bottom:16px; }
-
-  .exercises { display:flex; flex-direction:column; gap:12px; }
-  .exercise { padding:12px; background:var(--bg); border-radius:10px; border-left:3px solid var(--warm); transition:all 0.2s; }
-  .exercise.edit-active { border-left-color:var(--edit-accent); background:var(--warm-light); }
-  .exercise:hover { background:rgba(0,0,0,0.02); }
-
-  .exercise-name { font-weight:600; font-size:14px; color:var(--accent-dark); margin-bottom:4px; }
-  .exercise-details { display:flex; gap:16px; font-size:12px; color:var(--text-mid); }
-  .exercise-detail { display:flex; gap:4px; }
-
-  .edit-controls { display:flex; gap:8px; margin-top:12px; }
-  .edit-controls button { padding:6px 12px; font-size:11px; border:none; border-radius:6px; cursor:pointer; font-weight:500; transition:all 0.2s; }
-  .edit-controls .btn-save { background:var(--sage); color:#fff; }
-  .edit-controls .btn-save:hover { background:var(--sage); opacity:0.9; }
-  .edit-controls .btn-delete { background:#f5e6e9; color:#8b5f6b; }
-  .edit-controls .btn-delete:hover { background:#f0d8e0; }
-
-  .action-buttons { display:flex; gap:8px; margin-top:12px; justify-content:flex-end; }
-  .action-buttons button { padding:6px 12px; font-size:11px; border:none; border-radius:6px; cursor:pointer; font-weight:500; transition:all 0.2s; }
-  .action-buttons .btn-edit { background:var(--warm); color:#fff; }
-  .action-buttons .btn-edit:hover { background:var(--warm); opacity:0.9; }
-  .action-buttons .btn-delete { background:#f5e6e9; color:#8b5f6b; }
-  .action-buttons .btn-delete:hover { background:#f0d8e0; }
-  .action-buttons .btn-clone { background:var(--slate-light); color:var(--slate); }
-  .action-buttons .btn-clone:hover { background:var(--slate-light); opacity:0.9; }
-
-  .add-routine-form { background:var(--warm-light); padding:24px; border-radius:var(--radius); margin-bottom:20px; }
-  .form-group { margin-bottom:16px; }
-  .form-group label { display:block; font-weight:600; font-size:12px; color:var(--accent-dark); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
-  .form-group input, .form-group select, .form-group textarea { width:100%; padding:10px; border:1px solid rgba(0,0,0,0.1); border-radius:8px; font-family:inherit; font-size:14px; }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:var(--warm); box-shadow:0 0 0 2px rgba(201,168,124,0.1); }
-  .form-group textarea { resize:vertical; min-height:80px; }
-
-  .btn-add { background:var(--warm); color:#fff; padding:10px 16px; border:none; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px; transition:all 0.2s; width:100%; }
-  .btn-add:hover { background:var(--warm); opacity:0.9; }
-
-  .exercises-form-group { margin-bottom:16px; }
-  .exercises-input { display:flex; gap:8px; margin-bottom:8px; }
-  .exercises-input input { flex:1; padding:8px; border:1px solid rgba(0,0,0,0.1); border-radius:6px; font-size:12px; }
-  .exercises-input button { padding:8px 12px; background:#f0e4d8; color:#8b6f47; border:none; border-radius:6px; cursor:pointer; font-weight:500; font-size:11px; }
-  .exercise-list { display:flex; flex-wrap:wrap; gap:8px; }
-  .exercise-tag { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; background:#f5ede3; color:#8b6f47; border-radius:20px; font-size:12px; }
-  .exercise-tag button { background:none; border:none; cursor:pointer; color:inherit; font-size:14px; padding:0; }
-
-  .empty-state { text-align:center; padding:60px 20px; color:var(--text-light); }
-  .empty-state-icon { font-size:48px; margin-bottom:16px; }
-  .empty-state-title { font-size:18px; font-weight:600; color:var(--text-mid); margin-bottom:8px; }
-  .empty-state-description { font-size:14px; margin-bottom:24px; }
-
-  .color-palette { display:flex; gap:12px; margin-bottom:16px; }
-  .color-option { width:40px; height:40px; border-radius:8px; cursor:pointer; border:2px solid transparent; transition:all 0.2s; }
-  .color-option:hover { transform:scale(1.1); }
-  .color-option.selected { border-color:var(--text); }
-  .color-sage { background:var(--sage); }
-  .color-warm { background:var(--warm); }
-  .color-rose { background:var(--rose); }
-  .color-slate { background:var(--slate); }
-  .color-clay { background:var(--clay); }
-  .color-mauve { background:var(--mauve); }
-
-  .time-picker { display:flex; gap:8px; }
-  .time-input { flex:1; }
-  .time-input input { width:100%; padding:8px; border:1px solid rgba(0,0,0,0.1); border-radius:6px; font-size:12px; }
-
-  @media (max-width:768px) {
-    .routine-header { flex-direction:column; }
-    .action-buttons { flex-direction:column; }
-    .action-buttons button { width:100%; }
-    .exercises-input { flex-direction:column; }
-    .exercises-input button { width:100%; }
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100dvh; overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
-</style>
-</head>
-<body>
-  <div class="top-bar">
-    <div class="top-bar-fill"></div>
-  </div>
 
-  <div class="header">
-    <h1>Pilates Routines</h1>
-    <p class="subtitle">Create and manage your daily workouts</p>
-    <div class="header-actions">
-      <button class="btn-primary" id="addRoutineBtn">+ New Routine</button>
-      <button class="btn-secondary" id="toggleEditBtn">Edit Mode</button>
-    </div>
-  </div>
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(0,0,0,0.04); z-index: 100; }
+  .top-bar-fill { height: 100%; background: var(--sage); transition: width 0.4s ease; }
+  .top-bar.edit-active .top-bar-fill { background: var(--edit-accent); }
 
-  <div id="editorBar" class="editor-bar" style="display:none;">
-    <span style="font-size:12px; font-weight:600; color:var(--accent-dark);">Editing Mode</span>
-    <button id="saveEditBtn" class="active">Save</button>
-    <button id="cancelEditBtn">Cancel</button>
-  </div>
+  .header { padding: 32px 20px 12px; text-align: center; position: relative; }
+  .header h1 { font-size: 20px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent-dark); }
+  .header .subtitle { font-size: 13px; color: var(--text-light); margin-top: 6px; font-weight: 400; letter-spacing: 0.3px; }
 
-  <div class="content">
-    <div id="addRoutineForm" class="add-routine-form" style="display:none;">
-      <h2 style="margin-bottom:16px; color:var(--accent-dark); font-size:16px;">Create New Routine</h2>
-      
-      <div class="form-group">
-        <label>Routine Name</label>
-        <input type="text" id="routineName" placeholder="Morning Flow" />
-      </div>
-
-      <div class="form-group">
-        <label>Duration (minutes)</label>
-        <input type="number" id="routineDuration" placeholder="30" min="1" />
-      </div>
-
-      <div class="form-group">
-        <label>Difficulty Level</label>
-        <select id="routineDifficulty">
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="advanced">Advanced</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Description</label>
-        <textarea id="routineDescription" placeholder="Describe your routine..."></textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Theme Color</label>
-        <div class="color-palette">
-          <div class="color-option color-sage selected" data-color="sage"></div>
-          <div class="color-option color-warm" data-color="warm"></div>
-          <div class="color-option color-rose" data-color="rose"></div>
-          <div class="color-option color-slate" data-color="slate"></div>
-          <div class="color-option color-clay" data-color="clay"></div>
-          <div class="color-option color-mauve" data-color="mauve"></div>
-        </div>
-      </div>
-
-      <div class="exercises-form-group">
-        <label>Add Exercises</label>
-        <div class="exercises-input">
-          <input type="text" id="exerciseName" placeholder="Exercise name" />
-          <input type="number" id="exerciseReps" placeholder="Reps" min="1" />
-          <input type="number" id="exerciseSets" placeholder="Sets" min="1" />
-          <button id="addExerciseBtn" type="button">Add</button>
-        </div>
-        <div class="exercise-list" id="exerciseList"></div>
-      </div>
-
-      <button class="btn-add" id="submitRoutineBtn">Create Routine</button>
-      <button class="btn-add" id="cancelRoutineBtn" style="background:var(--text-light); margin-top:8px;">Cancel</button>
-    </div>
-
-    <div id="routinesList"></div>
-  </div>
-
-  <script>
-    // Data persistence
-    const STORAGE_KEY = 'pilates-routines';
-    let routines = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-      {
-        id: 1,
-        name: 'Morning Flow',
-        duration: 30,
-        difficulty: 'beginner',
-        description: 'Gentle stretching and core activation to start your day',
-        color: 'sage',
-        exercises: [
-          { name: 'Pillow Breathing', reps: 10, sets: 3 },
-          { name: 'Shoulder Rolls', reps: 8, sets: 3 },
-          { name: 'Cat-Cow', reps: 10, sets: 3 },
-          { name: 'Spine Stretch', reps: 8, sets: 2 }
-        ]
-      },
-      {
-        id: 2,
-        name: 'Core Blast',
-        duration: 20,
-        difficulty: 'intermediate',
-        description: 'Intensive core strengthening workout',
-        color: 'warm',
-        exercises: [
-          { name: 'The Hundred', reps: 1, sets: 3 },
-          { name: 'Roll Up', reps: 10, sets: 3 },
-          { name: 'Single Leg Circles', reps: 10, sets: 2 },
-          { name: 'Criss Cross', reps: 12, sets: 3 }
-        ]
-      },
-      {
-        id: 3,
-        name: 'Full Body Challenge',
-        duration: 45,
-        difficulty: 'advanced',
-        description: 'Complete full-body conditioning and strength',
-        color: 'rose',
-        exercises: [
-          { name: 'The Hundred', reps: 1, sets: 4 },
-          { name: 'Roll Up', reps: 15, sets: 4 },
-          { name: 'Double Leg Circles', reps: 20, sets: 2 },
-          { name: 'Criss Cross', reps: 20, sets: 4 },
-          { name: 'Saw', reps: 12, sets: 3 }
-        ]
-      }
-    ];
-
-    let isEditMode = false;
-    let currentColor = 'sage';
-    let tempExercises = [];
-
-    // UI Elements
-    const addRoutineBtn = document.getElementById('addRoutineBtn');
-    const toggleEditBtn = document.getElementById('toggleEditBtn');
-    const editorBar = document.getElementById('editorBar');
-    const addRoutineForm = document.getElementById('addRoutineForm');
-    const routinesList = document.getElementById('routinesList');
-    const submitRoutineBtn = document.getElementById('submitRoutineBtn');
-    const cancelRoutineBtn = document.getElementById('cancelRoutineBtn');
-    const addExerciseBtn = document.getElementById('addExerciseBtn');
-    const exerciseList = document.getElementById('exerciseList');
-    const routineName = document.getElementById('routineName');
-    const routineDuration = document.getElementById('routineDuration');
-    const routineDifficulty = document.getElementById('routineDifficulty');
-    const routineDescription = document.getElementById('routineDescription');
-    const exerciseName = document.getElementById('exerciseName');
-    const exerciseReps = document.getElementById('exerciseReps');
-    const exerciseSets = document.getElementById('exerciseSets');
-    const saveEditBtn = document.getElementById('saveEditBtn');
-    const cancelEditBtn = document.getElementById('cancelEditBtn');
-    const topBarFill = document.querySelector('.top-bar-fill');
-
-    // Event Listeners
-    addRoutineBtn.addEventListener('click', showAddRoutineForm);
-    toggleEditBtn.addEventListener('click', toggleEditMode);
-    submitRoutineBtn.addEventListener('click', addNewRoutine);
-    cancelRoutineBtn.addEventListener('click', hideAddRoutineForm);
-    addExerciseBtn.addEventListener('click', addExerciseToTemp);
-    saveEditBtn.addEventListener('click', saveEditMode);
-    cancelEditBtn.addEventListener('click', cancelEditMode);
-
-    // Color palette selection
-    document.querySelectorAll('.color-option').forEach(option => {
-      option.addEventListener('click', function() {
-        document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
-        this.classList.add('selected');
-        currentColor = this.dataset.color;
-      });
-    });
-
-    function showAddRoutineForm() {
-      addRoutineForm.style.display = 'block';
-      addRoutineBtn.style.display = 'none';
-      routinesList.style.opacity = '0.5';
-      routinesList.style.pointerEvents = 'none';
-      tempExercises = [];
-      exerciseList.innerHTML = '';
-      currentColor = 'sage';
-      document.querySelector('.color-option').classList.add('selected');
-    }
-
-    function hideAddRoutineForm() {
-      addRoutineForm.style.display = 'none';
-      addRoutineBtn.style.display = 'inline-block';
-      routinesList.style.opacity = '1';
-      routinesList.style.pointerEvents = 'auto';
-      // Reset form
-      routineName.value = '';
-      routineDuration.value = '';
-      routineDifficulty.value = 'beginner';
-      routineDescription.value = '';
-      exerciseName.value = '';
-      exerciseReps.value = '';
-      exerciseSets.value = '';
-      tempExercises = [];
-      exerciseList.innerHTML = '';
-    }
-
-    function addExerciseToTemp() {
-      const name = exerciseName.value.trim();
-      const reps = parseInt(exerciseReps.value) || 0;
-      const sets = parseInt(exerciseSets.value) || 0;
-
-      if (!name) {
-        alert('Please enter exercise name');
-        return;
-      }
-
-      tempExercises.push({ name, reps, sets });
-
-      // Clear inputs
-      exerciseName.value = '';
-      exerciseReps.value = '';
-      exerciseSets.value = '';
-
-      renderTempExercises();
-    }
-
-    function renderTempExercises() {
-      exerciseList.innerHTML = tempExercises.map((exercise, index) => `
-        <div class="exercise-tag">
-          <span>${exercise.name} â¢ ${exercise.reps}x${exercise.sets}</span>
-          <button type="button" onclick="removeTempExercise(${index})">Ã</button>
-        </div>
-      `).join('');
-    }
-
-    function removeTempExercise(index) {
-      tempExercises.splice(index, 1);
-      renderTempExercises();
-    }
-
-    function addNewRoutine() {
-      const name = routineName.value.trim();
-      const duration = parseInt(routineDuration.value) || 0;
-      const difficulty = routineDifficulty.value;
-      const description = routineDescription.value.trim();
-      const color = currentColor;
-      const exercises = tempExercises;
-
-      if (!name) {
-        alert('Please enter routine name');
-        return;
-      }
-
-      if (exercises.length === 0) {
-        alert('Please add at least one exercise');
-        return;
-      }
-
-      const newRoutine = {
-        id: Date.now(),
-        name,
-        duration,
-        difficulty,
-        description,
-        color,
-        exercises
-      };
-
-      routines.push(newRoutine);
-      saveRoutines();
-      renderRoutines();
-      hideAddRoutineForm();
-    }
-
-    function saveRoutines() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(routines));
-    }
-
-    function renderRoutines() {
-      if (routines.length === 0) {
-        routinesList.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">ð§</div>
-            <div class="empty-state-title">No routines yet</div>
-            <div class="empty-state-description">Create your first routine to get started with your pilates practice</div>
-          </div>
-        `;
-        return;
-      }
-
-      routinesList.innerHTML = routines.map(routine => `
-        <div class="routine-card ${isEditMode ? 'edit-mode' : ''}">
-          <div class="routine-header">
-            <div>
-              <div class="routine-title">${escapeHtml(routine.name)}</div>
-              <div class="routine-meta">
-                <div class="routine-meta-item">
-                  <span class="routine-meta-icon">â±ï¸</span>
-                  <span>${routine.duration} min</span>
-                </div>
-              </div>
-            </div>
-            <span class="routine-difficulty ${routine.difficulty}">${routine.difficulty}</span>
-          </div>
-
-          ${routine.description ? `<div class="routine-description">${escapeHtml(routine.description)}</div>` : ''}
-
-          <div class="exercises">
-            ${routine.exercises.map(exercise => `
-              <div class="exercise ${isEditMode ? 'edit-active' : ''}">
-                <div class="exercise-name">${escapeHtml(exercise.name)}</div>
-                <div class="exercise-details">
-                  <div class="exercise-detail">
-                    <span>ð¢ ${exercise.reps}</span>
-                  </div>
-                  <div class="exercise-detail">
-                    <span>ð¦ ${exercise.sets}</span>
-                  </div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-
-          <div class="action-buttons">
-            <button class="btn-edit" onclick="editRoutine(${routine.id})">Edit</button>
-            <button class="btn-delete" onclick="deleteRoutine(${routine.id})">Delete</button>
-            <button class="btn-clone" onclick="cloneRoutine(${routine.id})">Clone</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    function editRoutine(id) {
-      const routine = routines.find(r => r.id === id);
-      if (!routine) return;
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Pilates Routines</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
-
-  :root {
-    --bg: #f8f6f3; --card: #ffffff; --accent: #8b7d6b; --accent-dark: #5c5147;
-    --text: #2d2a26; --text-mid: #6b6560; --text-light: #9e9590;
-    --warm: #c9a87c; --warm-light: #f5ede3;
-    --sage: #7a9178; --sage-light: #e6efe5;
-    --rose: #b8878f; --rose-light: #f5e6e9;
-    --slate: #7e8e9a; --slate-light: #e4ebf0;
-    --clay: #b08968; --clay-light: #f0e4d8;
-    --mauve: #9b8aa6; --mauve-light: #ede6f2;
-    --edit-accent: #c4a882;
-    --shadow: 0 1px 8px rgba(0,0,0,0.04); --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
-    --radius: 14px;
+  .header-actions { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+  .hdr-btn {
+    width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid rgba(0,0,0,0.08);
+    background: var(--card); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px; color: var(--text-mid); transition: all 0.2s;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',-apple-system,BlinkMacSystemFont,system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100dvh; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+  .hdr-btn.active { background: var(--edit-accent); color: #fff; border-color: var(--edit-accent); }
 
-  .top-bar { position:fixed; top:0; left:0; right:0; height:3px; background:rgba(0,0,0,0.04); z-index:100; }
-  .top-bar-fill { height:100%; background:var(--sage); transition:width 0.4s ease; }
-  .top-bar.edit-active .top-bar-fill { background:var(--edit-accent); }
-
-  .header { padding:32px 20px 12px; text-align:center; position:relative; }
-  .header h1 { font-size:20px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent-dark); }
-  .header .subtitle { font-size:13px; color:var(--text-light); margin-top:6px; font-weight:400; letter-spacing:0.3px; }
-  .header-actions { display:flex; gap:8px; justify-content:center; margin-top:12px; }
-  .hdr-btn { width:36px; height:36px; border-radius:10px; border:1.5px solid rgba(0,0,0,0.08); background:var(--card); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; color:var(--text-mid); transition:all 0.2s; }
-  .hdr-btn.active { background:var(--edit-accent); color:#fff; border-color:var(--edit-accent); }
-
-  .edit-banner { display:none; text-align:center; padding:6px 16px; margin:0 16px 8px; background:var(--warm-light); border-radius:10px; font-size:12px; font-weight:600; color:var(--clay); letter-spacing:0.5px; }
-  .edit-banner.show { display:block; }
-
-  /* ââ Library Screen ââ */
-  .library-screen { display:block; }
-  .library-screen.hidden { display:none; }
-  .library-header { padding:40px 20px 8px; text-align:center; }
-  .library-header h1 { font-size:22px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent-dark); }
-  .library-header .subtitle { font-size:13px; color:var(--text-light); margin-top:6px; }
-  .library-list { padding:16px 16px 100px; }
-
-  .routine-card {
-    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
-    padding:18px 18px; margin-bottom:12px; display:flex; align-items:center; gap:14px;
-    cursor:pointer; transition:transform 0.15s; border:1.5px solid transparent; position:relative;
+  .edit-banner {
+    display: none; text-align: center; padding: 6px 16px; margin: 0 16px 8px;
+    background: var(--warm-light); border-radius: 10px; font-size: 12px;
+    font-weight: 600; color: var(--clay); letter-spacing: 0.5px;
   }
-  .routine-card:active { transform:scale(0.98); }
-  .routine-icon { width:50px; height:50px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
-  .routine-info { flex:1; min-width:0; }
-  .routine-info h3 { font-size:16px; font-weight:600; line-height:1.35; }
-  .routine-info .meta { font-size:12px; color:var(--text-light); margin-top:3px; }
-  .routine-actions { display:flex; gap:4px; flex-shrink:0; }
-  .routine-action-btn { width:32px; height:32px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:var(--bg); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; color:var(--text-light); }
-  .routine-action-btn:active { transform:scale(0.9); }
-  .routine-action-btn.del { color:var(--rose); }
+  .edit-banner.show { display: block; }
 
-  .add-routine-btn {
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    padding:16px; margin:12px 0; border-radius:var(--radius); border:2px dashed rgba(0,0,0,0.1);
-    background:transparent; cursor:pointer; font-size:14px; font-weight:600;
-    color:var(--text-light); font-family:inherit; width:100%; transition:all 0.2s;
-  }
-  .add-routine-btn:active { background:rgba(0,0,0,0.02); }
-
-  /* ââ Home (Blocks) Screen ââ */
-  .home { padding:0 16px 100px; }
-  .home-screen { display:none; }
-  .home-screen.active { display:block; }
+  /* Home */
+  .home { padding: 0 16px 100px; }
+  .home-screen { display: block; }
+  .home-screen.hidden { display: none; }
 
   .block-card {
-    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
-    padding:16px 18px; margin-bottom:10px; display:flex; align-items:center; gap:14px;
-    cursor:pointer; transition:transform 0.15s; border:1.5px solid transparent; position:relative; overflow:hidden;
+    background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 16px 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px;
+    cursor: pointer; transition: transform 0.15s; border: 1.5px solid transparent;
+    position: relative; overflow: hidden;
   }
-  .block-card:active { transform:scale(0.98); }
-  .block-card.completed { border-color:var(--sage); opacity:0.75; }
-  .block-card.completed::before { content:''; position:absolute; top:0; left:0; bottom:0; width:3px; background:var(--sage); }
-  .block-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
-  .block-info { flex:1; min-width:0; }
-  .block-info h3 { font-size:14px; font-weight:600; line-height:1.35; }
-  .block-info .meta { font-size:11.5px; color:var(--text-light); margin-top:2px; }
-  .equip-tags { display:flex; gap:5px; margin-top:5px; flex-wrap:wrap; }
-  .equip-tag { font-size:10.5px; padding:2px 8px; border-radius:20px; font-weight:600; letter-spacing:0.3px; text-transform:uppercase; }
-  .block-card .arrow { color:var(--text-light); font-size:16px; flex-shrink:0; opacity:0.4; }
-  .block-card .check { display:none; font-size:16px; color:var(--sage); flex-shrink:0; }
-  .block-card.completed .arrow { display:none; }
-  .block-card.completed .check { display:block; }
+  .block-card:active { transform: scale(0.98); }
+  .block-card.completed { border-color: var(--sage); opacity: 0.75; }
+  .block-card.completed::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px; background: var(--sage); }
 
-  .edit-controls { display:none; flex-shrink:0; gap:4px; align-items:center; }
-  .edit-active .edit-controls { display:flex; }
-  .edit-active .arrow, .edit-active .check { display:none !important; }
-  .edit-ctrl-btn { width:30px; height:30px; border-radius:8px; border:1px solid rgba(0,0,0,0.08); background:var(--bg); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; color:var(--text-mid); transition:all 0.15s; }
-  .edit-ctrl-btn:active { transform:scale(0.9); }
-  .edit-ctrl-btn.del { color:var(--rose); }
+  .block-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .block-info { flex: 1; min-width: 0; }
+  .block-info h3 { font-size: 14px; font-weight: 600; line-height: 1.35; }
+  .block-info .meta { font-size: 11.5px; color: var(--text-light); margin-top: 2px; letter-spacing: 0.2px; }
 
-  /* ââ Exercise View ââ */
-  .exercise-view { display:none; min-height:100dvh; flex-direction:column; }
-  .exercise-view.active { display:flex; }
-  .ev-top { padding:20px 20px 12px; display:flex; align-items:center; gap:12px; }
-  .ev-back { width:34px; height:34px; border-radius:10px; background:var(--card); border:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; color:var(--text-mid); flex-shrink:0; }
-  .ev-block-title { font-size:15px; font-weight:600; flex:1; }
-  .ev-mode-toggle { display:flex; background:rgba(0,0,0,0.04); border-radius:8px; overflow:hidden; flex-shrink:0; }
-  .ev-mode-btn { padding:6px 12px; font-size:12px; font-weight:600; border:none; cursor:pointer; background:transparent; color:var(--text-light); transition:all 0.2s; font-family:inherit; }
-  .ev-mode-btn.active { background:var(--card); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,0.08); border-radius:6px; }
-  .ev-equip-row { display:flex; gap:6px; padding:0 20px; margin-bottom:6px; }
-  .ev-  .list-item-detail { font-size:11px; color:var(--text-light); margin-top:2px; line-height:1.4; }
-  .list-item .badge { margin-right:6px; }
+  .equip-tags { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+  .equip-tag { font-size: 10.5px; padding: 2px 8px; border-radius: 20px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; }
 
-  /* âââââââ Modal Base âââââââ */
-  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:200; align-items:flex-end; justify-content:center; }
-  .modal-overlay.show { display:flex; }
-  .modal-sheet { background:var(--bg); border-radius:20px 20px 0 0; width:100%; max-width:500px; max-height:75dvh; overflow-y:auto; padding:20px; animation:slideUp 0.25s ease; }
-  @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-  .modal-handle { width:40px; height:4px; background:rgba(0,0,0,0.15); border-radius:2px; margin:0 auto 20px; }
-  .modal-title { font-size:18px; font-weight:700; margin-bottom:20px; }
+  .block-card .arrow { color: var(--text-light); font-size: 16px; flex-shrink: 0; opacity: 0.4; }
+  .block-card .check { display: none; font-size: 16px; color: var(--sage); flex-shrink: 0; }
+  .block-card.completed .arrow { display: none; }
+  .block-card.completed .check { display: block; }
 
-  .form-group { margin-bottom:16px; }
-  .form-label { display:block; font-size:13px; font-weight:600; color:var(--accent-dark); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.4px; }
-  .form-input { width:100%; padding:11px 13px; border:1.5px solid rgba(0,0,0,0.1); border-radius:10px; font-size:14px; font-family:inherit; color:var(--text); background:var(--card); }
-  .form-input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 2px rgba(139,125,107,0.15); }
-  .form-textarea { resize:vertical; min-height:100px; }
-
-  .emoji-picker { display:flex; flex-wrap:wrap; gap:8px; }
-  .emoji-btn { width:44px; height:44px; border-radius:10px; border:1.5px solid rgba(0,0,0,0.08); background:var(--card); cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
-  .emoji-btn:active { transform:scale(0.9); }
-  .emoji-btn.selected { border-color:var(--accent); background:rgba(139,125,107,0.1); }
-
-  .badge-toggles { display:flex; flex-direction:column; gap:8px; }
-  .badge-toggle { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; border:1.5px solid rgba(0,0,0,0.06); background:var(--card); cursor:pointer; font-size:14px; font-weight:500; font-family:inherit; color:var(--text-mid); }
-  .badge-toggle:active { transform:scale(0.98); }
-  .badge-toggle.active { border-color:var(--sage); color:var(--sage); background:var(--sage-light); }
-  .modal-actions { display:flex; gap:10px; margin-top:20px; }
-  .modal-btn { flex:1; padding:13px; border-radius:12px; font-size:14px; font-weight:600; border:none; cursor:pointer; font-family:inherit; }
-  .modal-btn-cancel { background:var(--card); color:var(--text-mid); border:1.5px solid rgba(0,0,0,0.06); }
-  .modal-btn-save { background:var(--sage); color:#fff; }
-  .modal-btn-danger { background:var(--rose); color:#fff; }
-
-  /* Version panel */
-  .version-panel { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:flex-end; justify-content:center; }
-  .version-panel.show { display:flex; }
-  .version-sheet { background:var(--bg); border-radius:20px 20px 0 0; width:100%; max-width:500px; max-height:75dvh; overflow-y:auto; padding:20px; animation:slideUp 0.25s ease; }
-  .version-item { display:flex; align-items:center; gap:12px; padding:14px; margin-bottom:8px; background:var(--card); border-radius:12px; box-shadow:var(--shadow); }
-  .vi-info { flex:1; }
-  .vi-info .vi-label { font-size:14px; font-weight:600; }
-  .vi-info .vi-date { font-size:12px; color:var(--text-light); margin-top:2px; }
-  .vi-restore { padding:6px 14px; border-radius:8px; font-size:12px; font-weight:600; border:1.5px solid rgba(0,0,0,0.1); background:var(--card); cursor:pointer; font-family:inherit; color:var(--text-mid); }
-
-  /* ââââ Routine settings modal extras ââââ */
-  .routine-opts { display:flex; flex-direction:column; gap:8px; }
-  .routine-opt-btn {
-    display:flex; align-items:center; gap:12px; padding:14px 16px; border-radius:12px;
-    background:var(--card); border:1.5px solid rgba(0,0,0,0.06); cursor:pointer;
-    font-size:14px; font-weight:500; font-family:inherit; color:var(--text); width:100%;
-    transition:all 0.15s; text-align:left;
+  /* Edit mode block controls */
+  .edit-controls { display: none; flex-shrink: 0; gap: 4px; align-items: center; }
+  .edit-active .edit-controls { display: flex; }
+  .edit-active .arrow, .edit-active .check { display: none !important; }
+  .edit-ctrl-btn {
+    width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.08);
+    background: var(--bg); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px; color: var(--text-mid); transition: all 0.15s;
   }
-  .routine-opt-btn:active { transform:scale(0.98); }
-  .routine-opt-btn.danger { color:var(--rose); }
-  .routine-opt-btn .opt-icon { font-size:18px; width:24px; text-align:center; }
+  .edit-ctrl-btn:active { transform: scale(0.9); }
+  .edit-ctrl-btn.del { color: var(--rose); }
+
+  /* Exercise View */
+  .exercise-view { display: none; min-height: 100dvh; flex-direction: column; }
+  .exercise-view.active { display: flex; }
+
+  .ev-top { padding: 20px 20px 12px; display: flex; align-items: center; gap: 12px; }
+  .ev-back {
+    width: 34px; height: 34px; border-radius: 10px; background: var(--card);
+    border: 1px solid rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px; color: var(--text-mid); flex-shrink: 0;
+  }
+  .ev-block-title { font-size: 15px; font-weight: 600; flex: 1; }
+
+  .ev-mode-toggle { display: flex; background: rgba(0,0,0,0.04); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+  .ev-mode-btn {
+    padding: 6px 12px; font-size: 12px; font-weight: 600; border: none; cursor: pointer;
+    background: transparent; color: var(--text-light); transition: all 0.2s; font-family: inherit;
+  }
+  .ev-mode-btn.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-radius: 6px; }
+
+  .ev-equip-row { display: flex; gap: 6px; padding: 0 20px; margin-bottom: 6px; }
+  .ev-progress { margin: 0 20px; height: 4px; background: rgba(0,0,0,0.04); border-radius: 2px; overflow: hidden; }
+  .ev-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s ease; }
+  .ev-progress-text { text-align: center; font-size: 11px; color: var(--text-light); margin-top: 5px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  .card-mode { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+  .card-mode.hidden { display: none; }
+
+  .ev-card {
+    background: var(--card); border-radius: 18px; box-shadow: var(--shadow-md);
+    padding: 36px 28px 30px; width: 100%; max-width: 400px; text-align: center;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .ev-card .step-emoji { font-size: 40px; margin-bottom: 16px; line-height: 1; }
+  .ev-card .step-name { font-size: 20px; font-weight: 700; line-height: 1.3; margin-bottom: 10px; }
+  .ev-card .step-detail { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
+
+  .badge-row { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; margin-top: 18px; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.2px; }
+  .badge-pulse { background: var(--clay-light); color: var(--clay); }
+  .badge-hold { background: var(--rose-light); color: var(--rose); }
+  .badge-transition { background: var(--mauve-light); color: var(--mauve); }
+  .badge-repeat { background: var(--sage-light); color: var(--sage); }
+  .badge-flow { background: var(--slate-light); color: var(--slate); }
+  .badge-side { background: var(--warm-light); color: var(--clay); }
+
+  .ev-nav { padding: 14px 20px 30px; display: flex; gap: 10px; }
+  .ev-btn {
+    flex: 1; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600;
+    border: none; cursor: pointer; transition: transform 0.1s; font-family: inherit; letter-spacing: 0.3px;
+  }
+  .ev-btn:active { transform: scale(0.97); }
+  .ev-btn-prev { background: var(--card); color: var(--text-mid); border: 1.5px solid rgba(0,0,0,0.06); }
+  .ev-btn-next { background: var(--accent-dark); color: #fff; }
+  .ev-btn:disabled { opacity: 0.3; cursor: default; }
+  .ev-btn-done { background: var(--sage); color: #fff; }
+
+  /* List Mode */
+  .list-mode { flex: 1; padding: 12px 20px 100px; overflow-y: auto; }
+  .list-mode.hidden { display: none; }
+  .list-item { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.04); align-items: flex-start; }
+  .list-item:last-child { border-bottom: none; }
+  .list-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text-light); flex-shrink: 0; margin-top: 1px; }
+  .list-item.is-pulse .list-num { background: var(--clay-light); color: var(--clay); }
+  .list-item.is-hold .list-num { background: var(--rose-light); color: var(--rose); }
+  .list-item.is-repeat .list-num { background: var(--sage-light); color: var(--sage); }
+  .list-item.is-transition .list-num { background: var(--mauve-light); color: var(--mauve); }
+  .list-content { flex: 1; }
+  .list-content .list-name { font-size: 14px; font-weight: 600; line-height: 1.35; }
+  .list-content .list-detail { font-size: 12.5px; color: var(--text-light); line-height: 1.45; margin-top: 2px; }
+  .list-content .list-badges { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+  .list-content .badge { font-size: 10.5px; padding: 3px 9px; }
+  .list-emoji { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+
+  /* Completion */
+  .completion-screen { display: none; min-height: 100dvh; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; }
+  .completion-screen.active { display: flex; }
+  .completion-screen .done-icon { font-size: 56px; margin-bottom: 20px; }
+  .completion-screen h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .completion-screen p { font-size: 14px; color: var(--text-light); max-width: 280px; line-height: 1.5; }
+  .completion-screen .ev-btn { margin-top: 28px; width: 200px; }
+
+  .reset-bar { text-align: center; padding: 10px 0 24px; }
+  .reset-btn { background: none; border: none; color: var(--text-light); font-size: 12px; cursor: pointer; text-decoration: underline; padding: 8px 16px; font-family: inherit; }
+
+  /* âââââââââââââââââ Edit Mode Styles âââââââââââââââââ */
+  .block-edit-view { display: none; min-height: 100dvh; flex-direction: column; }
+  .block-edit-view.active { display: flex; }
+
+  .be-header { padding: 20px 20px 12px; display: flex; align-items: center; gap: 12px; }
+  .be-title-input {
+    flex: 1; font-size: 15px; font-weight: 600; font-family: inherit;
+    border: 1.5px solid rgba(0,0,0,0.1); border-radius: 10px; padding: 8px 12px;
+    background: var(--card); color: var(--text);
+  }
+  .be-equip-row { padding: 0 20px 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .be-equip-chip {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    border: 1.5px solid rgba(0,0,0,0.1); background: var(--card); cursor: pointer;
+    transition: all 0.2s; font-family: inherit; color: var(--text-mid);
+  }
+  .be-equip-chip.active { background: var(--sage-light); border-color: var(--sage); color: var(--sage); }
+
+  .be-exercises { flex: 1; padding: 0 16px 120px; overflow-y: auto; }
+  .be-ex-item {
+    display: flex; align-items: center; gap: 10px; padding: 12px 14px; margin-bottom: 8px;
+    background: var(--card); border-radius: 12px; box-shadow: var(--shadow);
+  }
+  .be-ex-emoji { font-size: 18px; flex-shrink: 0; }
+  .be-ex-info { flex: 1; min-width: 0; }
+  .be-ex-info .be-ex-name { font-size: 13px; font-weight: 600; line-height: 1.3; }
+  .be-ex-info .be-ex-detail { font-size: 11.5px; color: var(--text-light); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .be-ex-actions { display: flex; gap: 3px; flex-shrink: 0; }
+
+  .add-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 12px; margin: 8px 0; border-radius: 12px; border: 1.5px dashed rgba(0,0,0,0.12);
+    background: transparent; cursor: pointer; font-size: 13px; font-weight: 600;
+    color: var(--text-light); font-family: inherit; width: 100%; transition: all 0.2s;
+  }
+  .add-btn:active { background: rgba(0,0,0,0.02); }
+
+  /* Floating save button */
+  .float-save {
+    display: none; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    padding: 14px 32px; border-radius: 50px; background: var(--sage); color: #fff;
+    font-size: 15px; font-weight: 600; border: none; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(122,145,120,0.4); font-family: inherit;
+    z-index: 50; animation: pulseGlow 2s infinite;
+  }
+  .float-save.show { display: block; }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 4px 20px rgba(122,145,120,0.4); }
+    50% { box-shadow: 0 4px 30px rgba(122,145,120,0.6); }
+  }
+
+  /* Edit Exercise Modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    z-index: 200; align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-sheet {
+    background: var(--bg); border-radius: 20px 20px 0 0; width: 100%; max-width: 500px;
+    max-height: 85dvh; overflow-y: auto; padding: 20px; animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+  .modal-handle { width: 36px; height: 4px; background: rgba(0,0,0,0.12); border-radius: 2px; margin: 0 auto 16px; }
+  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%; padding: 10px 14px; border: 1.5px solid rgba(0,0,0,0.1); border-radius: 10px;
+    font-size: 14px; font-family: inherit; background: var(--card); color: var(--text);
+  }
+  .form-textarea { resize: vertical; min-height: 60px; }
+
+  .emoji-picker { display: flex; flex-wrap: wrap; gap: 6px; }
+  .emoji-opt {
+    width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid rgba(0,0,0,0.06);
+    background: var(--card); display: flex; align-items: center; justify-content: center;
+    font-size: 20px; cursor: pointer; transition: all 0.15s;
+  }
+  .emoji-opt.selected { border-color: var(--sage); background: var(--sage-light); }
+  .emoji-opt:active { transform: scale(0.9); }
+
+  .badge-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+  .badge-toggle {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    border: 1.5px solid rgba(0,0,0,0.1); background: var(--card); cursor: pointer;
+    transition: all 0.2s; font-family: inherit; color: var(--text-mid);
+  }
+  .badge-toggle.active { border-color: var(--sage); color: var(--sage); background: var(--sage-light); }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .modal-btn {
+    flex: 1; padding: 13px; border-radius: 12px; font-size: 14px; font-weight: 600;
+    border: none; cursor: pointer; font-family: inherit;
+  }
+  .modal-btn-cancel { background: var(--card); color: var(--text-mid); border: 1.5px solid rgba(0,0,0,0.06); }
+  .modal-btn-save { background: var(--sage); color: #fff; }
+
+  /* Version History Panel */
+  .version-panel { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: flex-end; justify-content: center; }
+  .version-panel.show { display: flex; }
+  .version-sheet {
+    background: var(--bg); border-radius: 20px 20px 0 0; width: 100%; max-width: 500px;
+    max-height: 75dvh; overflow-y: auto; padding: 20px; animation: slideUp 0.25s ease;
+  }
+  .version-item {
+    display: flex; align-items: center; gap: 12px; padding: 14px; margin-bottom: 8px;
+    background: var(--card); border-radius: 12px; box-shadow: var(--shadow);
+  }
+  .version-item.current { border: 1.5px solid var(--sage); }
+  .vi-info { flex: 1; }
+  .vi-info .vi-label { font-size: 14px; font-weight: 600; }
+  .vi-info .vi-date { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+  .vi-restore {
+    padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    border: 1.5px solid rgba(0,0,0,0.1); background: var(--card); cursor: pointer;
+    font-family: inherit; color: var(--text-mid);
+  }
+  .vi-restore:active { background: var(--sage-light); }
+  .vi-current-tag { font-size: 11px; font-weight: 600; color: var(--sage); padding: 4px 10px; background: var(--sage-light); border-radius: 6px; }
 </style>
 </head>
 <body>
 
 <div class="top-bar" id="topBar"><div class="top-bar-fill" id="topBarFill"></div></div>
 
-<!-- ââââ LIBRARY SCREEN ââââ -->
-<div class="library-screen" id="libraryScreen">
-  <div class="library-header">
-    <h1>My Routines</h1>
-    <div class="subtitle" id="libSubtitle"></div>
-  </div>
-  <div class="library-list" id="libraryList"></div>
-</div>
-
-<!-- ââââ HOME (BLOCKS) SCREEN ââââ -->
+<!-- HOME -->
 <div class="home-screen" id="homeScreen">
   <div class="header">
-    <h1 id="routineTitle"></h1>
-    <div class="subtitle" id="homeSubtitle"></div>
+    <h1>Mat Pilates</h1>
+    <div class="subtitle" id="homeSubtitle">10 blocks Â· warm-up Â· finisher</div>
     <div class="header-actions">
-      <button class="hdr-btn" onclick="goLibrary()" title="My Routines" style="font-size:13px">&#9664;</button>
-      <button class="hdr-btn" id="btnEdit" onclick="toggleEditMode()" title="Edit mode">&#9998;</button>
-      <button class="hdr-btn" id="btnVersions" onclick="openVersions()" title="Version history">&#128197;</button>
+      <button class="hdr-btn" id="btnEdit" onclick="toggleEditMode()" title="Edit mode">â</button>
+      <button class="hdr-btn" id="btnVersions" onclick="openVersions()" title="Version history">ð</button>
     </div>
   </div>
   <div class="edit-banner" id="editBanner">EDIT MODE â tap blocks to edit, use arrows to reorder</div>
   <div class="home" id="blockList"></div>
-  <div id="homeFooter"><div class="reset-bar"><button class="reset-btn" onclick="resetProgress()">Reset progress</button></div></div>
+  <div id="homeFooter">
+    <div class="reset-bar">
+      <button class="reset-btn" onclick="resetAll()">Reset progress</button>
+    </div>
+  </div>
 </div>
 
-<!-- ââââ EXERCISE VIEW ââââ -->
+<!-- EXERCISE VIEW (practice mode) -->
 <div class="exercise-view" id="exerciseView">
   <div class="ev-top">
-    <button class="ev-back" onclick="goHome()">&#8592;</button>
+    <button class="ev-back" onclick="goHome()">â</button>
     <div class="ev-block-title" id="evTitle"></div>
     <div class="ev-mode-toggle">
       <button class="ev-mode-btn active" id="btnModeCard" onclick="setMode('card')">Cards</button>
@@ -687,595 +365,61 @@
   </div>
 </div>
 
-<!-- ââââ BLOCK EDIT VIEW ââââ -->
+<!-- BLOCK EDIT VIEW -->
 <div class="block-edit-view" id="blockEditView">
   <div class="be-header">
-    <button class="ev-back" onclick="closeBlockEdit()">&#8592;</button>
+    <button class="ev-back" onclick="closeBlockEdit()">â</button>
     <input class="be-title-input" id="beTitleInput" placeholder="Block title" />
   </div>
   <div class="be-equip-row" id="beEquipRow"></div>
   <div class="be-exercises" id="beExercises"></div>
 </div>
 
-<!-- ââââ COMPLETION ââââ -->
+<!-- COMPLETION -->
 <div class="completion-screen" id="completionScreen">
-  <div class="done-icon">&#10024;</div>
+  <div class="done-icon">â¨</div>
   <h2>Routine Complete</h2>
   <p>All blocks finished. Beautiful practice.</p>
   <button class="ev-btn ev-btn-done" onclick="goHome()">Back to Overview</button>
 </div>
 
-<!-- ââââ Edit Exercise Modal ââââ -->
+<!-- Edit Exercise Modal -->
 <div class="modal-overlay" id="exModal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Edit Exercise</div>
-    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="exNameInput" /></div>
-    <div class="form-group"><label class="form-label">Details / Cues</label><textarea class="form-input form-textarea" id="exDetailInput"></textarea></div>
-    <div class="form-group"><label class="form-label">Emoji</label><div class="emoji-picker" id="emojiPicker"></div></div>
-    <div class="form-group"><label class="form-label">Badges</label><div class="badge-toggles" id="badgeToggles"></div></div>
-    <div class="modal-actions"><button class="modal-btn modal-btn-cancel" onclick="closeExModal()">Cancel</button><button class="modal-btn modal-btn-save" onclick="saveExModal()">Save</button></div>
-  </div>
-</div>
-
-<!-- ââââ Version History ââââ -->
-<div class="version-panel" id="versionPanel">
-  <div class="version-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Version History</div>
-    <div id="versionList"></div>
-    <div style="margin-top:12px"><button class="modal-btn modal-btn-cancel" onclick="closeVersions()" style="width:100%">Close</button></div>
-  </div>
-</div>
-
-<!-- ââââ New Routine Modal ââââ -->
-<div class="modal-overlay" id="newRoutineModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">New Routine</div>
-    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="newRoutineName" placeholder="e.g., Reformer Basics" /></div>
+    <div class="modal-title" id="exModalTitle">Edit Exercise</div>
     <div class="form-group">
-      <label class="form-label">Description</label>
-      <textarea class="form-input form-textarea" id="newRoutineDesc" placeholder="Brief description..."></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="closeNewRoutineModal()">Cancel</button>
-      <button class="modal-btn modal-btn-save" onclick="createNewRoutine()">Create</button>
-    </div>
-  </div>
-</div>
-
-<!-- ââââ Block Edit Modal ââââ -->
-<div class="modal-overlay" id="blockModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Edit Block</div>
-    <div class="form-group"><label class="form-label">Block Name</label><input class="form-input" id="blockNameInput" /></div>
-    <div class="form-group">
-      <label class="form-label">Equipment</label>
-      <div id="equipPicker" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+      <label class="form-label">Name</label>
+      <input class="form-input" id="exNameInput" placeholder="Exercise name" />
     </div>
     <div class="form-group">
-      <label class="form-label">Exercises</label>
-      <div id="blockExercisesInput"></div>
-      <button type="button" onclick="addExerciseField()" style="width:100%; padding:10px; margin-top:10px; border:1px dashed rgba(0,0,0,0.2); background:transparent; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; color:var(--text-light);">+ Add Exercise</button>
+      <label class="form-label">Details / Cues</label>
+      <textarea class="form-input form-textarea" id="exDetailInput" placeholder="Describe the movement"></textarea>
     </div>
-    <div class="routine-opts">
-      <button class="routine-opt-btn danger" onclick="deleteBlock()"><span class="opt-icon">ðï¸</span> Delete Block</button>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="closeBlockModal()">Cancel</button>
-      <button class="modal-btn modal-btn-save" onclick="saveBlock()">Save</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  // ââââââââââââââââââââââââââââââââââââ
-  // STORAGE AND CONFIGURATION
-  // ââââââââââââââââââââââââââââââââââââ
-  const MP3_BUCKET = 'https://a.pilatesmp3s.com/mp3s/';
-  const ROUTINES_KEY = 'mp3-routines';
-  const ACTIVE_ROUTINE_KEY = 'mp3-active-routine';
-  const PROGRESS_KEY = 'mp3-progress';
-  const EDIT_MODE_KEY = 'mp3-edit-mode';
-
-  let routines = [];
-  let activeRoutineId = null;
-  let isEditMode = false;
-  let currentScreen = 'library';
-  let currentBlockIndex = -1;
-  let currentStepIndex = -1;
-  let currentMode = 'card';
-  let selectedEquipment = [];
-
-  // ââââââââââââââââââââââââââââââââââââ
-  // LOAD & INITIALIZE
-  // ââââââââââââââââââââââââââââââââââââ
-  function loadRoutines() {
-    const stored = localStorage.getItem(ROUTINES_KEY);
-    routines = stored ? JSON.parse(stored) : getDefaultRoutines();
-    activeRoutineId = localStorage.getItem(ACTIVE_ROUTINE_KEY) || (routines.length > 0 ? routines[0].id : null);
-    renderLibrary();
-  }
-
-  function getDefaultRoutines() {
-    return [
-      {
-        id: 'routine-1',
-        name: 'Morning Stretch',
-        desc: 'Gentle 10-minute flow to start your day',
-        duration: 10,
-        blocks: [
-          {
-            id: 'b1', title: 'Breathing', equipment: [],
-            exercises: [
-              { id: 'e1', name: 'Pillow Breathing', detail: '10 breaths, deep and slow', emoji: 'ð«', badges: ['pulse'] },
-              { id: 'e2', name: 'Shoulder Rolls', detail: '10 forward, 10 back', emoji: 'â­', badges: [] }
-            ]
-          },
-          {
-            id: 'b2', title: 'Spine Mobility', equipment: ['mat'],
-            exercises: [
-              { id: 'e3', name: 'Cat-Cow', detail: 'Flow with your breath', emoji: 'ð±', badges: ['flow'] },
-              { id: 'e4', name: 'Spinal Twist', detail: 'Hold 3-5 breaths each side', emoji: 'ð', badges: ['hold', 'side'] }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'routine-2',
-        name: 'Core Power',
-        desc: '20-minute mat intensifier',
-        duration: 20,
-        blocks: [
-          { id: 'b3', title: 'Warm-Up', equipment: [],
-            exercises: [
-              { id: 'e5', name: 'Pulse Ups', detail: '30 small pulses', emoji: 'ð', badges: ['pulse'] },
-              { id: 'e6', name: 'Pelvic Tilts', detail: '15 reps', emoji: 'â¬ï¸', badges: [] }
-            ] },
-          { id: 'b4', title: 'Crunch Series', equipment: ['mat'],
-            exercises: [
-              { id: 'e7', name: 'Curl Ups', detail: '3x12 reps', emoji: 'ðª', badges: [] },
-              { id: 'e8', name: 'Oblique Crunches', detail: 'Alternate sides, 3x10', emoji: 'ð', badges: ['side', 'repeat'] }
-            ] },
-          { id: 'b5', title: 'Transitions', equipment: [],
-            exercises: [
-              { id: 'e9', name: 'Rollover', detail: 'Use momentum, 3 reps', emoji: 'ð', badges: ['transition'] }
-            ], isTransition: true }
-        ]
-      }
-    ];
-  }
-
-  // ââââââââââââââââââââââââââââââââââââ
-  // LIBRARY SCREEN
-  // ââââââââââââââââââââââââââââââââââââ
-  function renderLibrary() {
-    const screen = document.getElementById('libraryScreen');
-    const list = document.getElementById('libraryList');
-    const subtitle = document.getElementById('libSubtitle');
-
-    if (currentScreen !== 'library') screen.classList.add('hidden');
-    else screen.classList.remove('hidden');
-
-    subtitle.textContent = routines.length + ' routine' + (routines.length !== 1 ? 's' : '');
-
-    list.innerHTML = (routines.length === 0 ? '<div style="text-align:center; padding:40px 20px; color:var(--text-light);">No routines yet. Create one!</div>' : '') + routines.map(r => `
-      <div class="routine-card" onclick="selectRoutine('${r.id}')">
-        <div class="routine-icon" style="background:var(--warm-light);">ð§</div>
-        <div class="routine-info">
-          <h3>${r.name}</h3>
-          <div class="meta">${r.duration} min â¢ ${r.blocks.length} blocks</div>
-        </div>
-        <div class="routine-actions">
-          <button class="routine-action-btn" onclick="event.stopPropagation();editRoutine('${r.id}')" title="Edit">â</button>
-          <button class="routine-action-btn del" onclick="event.stopPropagation();deleteRoutine('${r.id}')" title="Delete">â</button>
-        </div>
-      </div>
-    `).join('') + `
-      <button class="add-routine-btn" onclick="openNewRoutineModal()">+ New Routine</button>
-    `;
-  }
-
-  function selectRoutine(id) {
-    activeRoutineId = id;
-    localStorage.setItem(ACTIVE_ROUTINE_KEY, id);
-    goHome();
-  }
-
-  function editRoutine(id) {
-    alert('Edit routine: ' + id);
-  }
-
-  function deleteRoutine(id) {
-    if (confirm('Delete routine?')) {
-      routines = routines.filter(r => r.id !== id);
-      localStorage.setItem(ROUTINES_KEY, JSON.stringify(routines));
-      renderLibrary();
-    }
-  }
-
-  // ââââââââââââââââââââââââââââââââââââ
-  // HOME SCREEN (BLOCKS)
-  // ââââââââââââââââââââââââââââââââââââ
-  function goHome() {
-    currentScreen = 'home';
-    currentBlockIndex = -1;
-    currentStepIndex = -1;
-    renderHome();
-  }
-
-  function renderHome() {
-    const screen = document.getElementById('homeScreen');
-    const routine = routines.find(r => r.id === activeRoutineId);
-    
-    if (!routine) return goLibrary();
-    
-    if (currentScreen !== 'home') screen.classList.remove('active');
-    else screen.classList.add('active');
-
-    document.getElementById('routineTitle').textContent = routine.name;
-    document.getElementById('homeSubtitle').textContent = routine.duration + ' min';
-    document.getElementById('editBanner').classList.toggle('show', isEditMode);
-
-    const blockList = document.getElementById('blockList');
-    blockList.innerHTML = routine.blocks.map((block, i) => `
-      <div class="block-card ${isEditMode ? 'edit-active' : ''} ${isProgressComplete(block.id) ? 'completed' : ''}" onclick="!isEditMode && startBlock(${i})">
-        <div class="block-icon" style="background:var(--warm-light);">ð·</div>
-        <div class="block-info">
-          <h3>${block.title}</h3>
-          <div class="meta">${block.exercises.length} exercise${block.exercises.length !== 1 ? 's' : ''}</div>
-          ${block.equipment.length > 0 ? '<div class="equip-tags">' + block.equipment.map(e => `<span class="equip-tag" style="background:var(--slate-light); color:var(--slate);">${e}</span>`).join('') + '</div>' : ''}
-        </div>
-        <span class="arrow">âº</span>
-        <span class="check">â</span>
-        ${isEditMode ? `<div class="edit-controls">
-          <button class="edit-ctrl-btn" onclick="event.stopPropagation();editBlock(${i})">â</button>
-          <button class="edit-ctrl-btn del" onclick="event.stopPropagation();deleteBlock(${i})">â</button>
-          ${i > 0 ? `<button class="edit-ctrl-btn" onclick="event.stopPropagation();moveBlock(${i},-1)">â²</button>` : ''}
-          ${i < routine.blocks.length - 1 ? `<button class="edit-ctrl-btn" onclick="event.stopPropagation();moveBlock(${i},1)">â¼</button>` : ''}
-        </div>` : ''}
-      </div>
-    `).join('');
-  }
-
-  function startBlock(blockIndex) {
-    currentBlockIndex = blockIndex;
-    currentStepIndex = 0;
-    currentScreen = 'exercise';
-    renderExerciseView();
-  }
-
-  // ââââââââââââââââââââââââââââââââââââ
-  // EXERCISE VIEW
-  // ââââââââââââââââââââââââââââââââââââ
-  function renderExerciseView() {
-    const routine = routines.find(r => r.id === activeRoutineId);
-    const block = routine.blocks[currentBlockIndex];
-    const exercise = block.exercises[currentStepIndex];
-    
-    document.getElementById('exerciseView').classList.toggle('active', currentScreen === 'exercise');
-    document.getElementById('evTitle').textContent = block.title;
-    document.getElementById('evEmoji').textContent = exercise.emoji;
-    document.getElementById('evName').textContent = exercise.name;
-    document.getElementById('evDetail').textContent = exercise.detail;
-    
-    const fillPercent = ((currentStepIndex + 1) / block.exercises.length) * 100;
-    document.getElementById('evProgressFill').style.width = fillPercent + '%';
-    document.getElementById('evProgressText').textContent = (currentStepIndex + 1) + ' / ' + block.exercises.length;
-    
-    document.getElementById('evBadges').innerHTML = exercise.badges.map(b => {
-      const badgeClass = 'badge-' + b;
-      return `<div class="badge ${badgeClass}">${b}</div>`;
-    }).join('');
-
-    document.getElementById('btnPrev').disabled = currentStepIndex === 0 && currentBlockIndex === 0;
-    document.getElementById('btnNext').disabled = currentStepIndex === block.exercises.length - 1 && currentBlockIndex === routine.blocks.length - 1;
-  }
-
-  function nextStep() {
-    const routine = routines.find(r => r.id === activeRoutineId);
-    const block = routine.blocks[currentBlockIndex];
-    
-    if (currentStepIndex < block.exercises.length - 1) {
-      currentStepIndex++;
-    } else if (currentBlockIndex < routine.blocks.length - 1) {
-      currentBlockIndex++;
-      currentStepIndex = 0;
-    } else {
-      markBlockComplete(block.id);
-      showCompletion();
-      return;
-    }
-    renderExerciseView();
-  }
-
-  function prevStep() {
-    if (currentStepIndex > 0) {
-      currentStepIndex--;
-    } else if (currentBlockIndex > 0) {
-      currentBlockIndex--;
-      const block = routines.find(r => r.id === activeRoutineId).blocks[currentBlockIndex];
-      currentStepIndex = block.exercises.length - 1;
-    }
-    renderExerciseView();
-  }
-
-  function goHome() {
-    currentScreen = 'home';
-    renderHome();
-  }
-
-  function goLibrary() {
-    currentScreen = 'library';
-    renderLibrary();
-  }
-
-  function showCompletion() {
-    currentScreen = 'completion';
-    document.getElementById('completionScreen').style.display = 'flex';
-    setTimeout(() => goHome(),1800);
-  }
-
-  // ââââââââââââââââââââââââââââââââââââ
-  // EDIT MODE & MODALS
-  // ââââââââââââââââââââââââââââââââââââ
-  function toggleEditMode() {
-    isEditMode = !isEditMode;
-    document.getElementById('btnEdit').classList.toggle('active', isEditMode);
-    renderHome();
-  }
-
-  function saveEditMode() {
-    isEditMode = false;
-    document.getElementById('btnEdit').classList.remove('active');
-    localStorage.setItem(ROUTINES_KEY, JSON.stringify(routines));
-    renderHome();
-  }
-
-  function cancelEditMode() {
-    isEditMode = false;
-    renderHome();
-  }
-
-  function openNewRoutineModal() {
-    document.getElementById('newRoutineModal').classList.add('show');
-  }
-
-  function closeNewRoutineModal() {
-    document.getElementById('newRoutineModal').classList.remove('show');
-  }
-
-  function createNewRoutine() {
-    const name = document.getElementById('newRoutineName').value;
-    const desc = document.getElementById('newRoutineDesc').value;
-    if (!name) return alert('Enter routine name');
-    routines.push({
-      id: 'routine-' + Date.now(),
-      name,
-      desc,
-      duration: 20,
-      blocks: []
-    });
-    localStorage.setItem(ROUTINES_KEY, JSON.stringify(routines));
-    closeNewRoutineModal();
-    renderLibrary();
-  }
-
-  function openVersions() {
-    document.getElementById('versionPanel').classList.add('show');
-    const vk = 'mp3-versions-' + activeRoutineId;
-    const versions = JSON.parse(localStorage.getItem(vk) || '[]');
-    document.getElementById('versionList').innerHTML = versions.slice(-5).reverse().map((v, i) => `
-      <div class="version-item">
-        <div class="vi-info">
-          <div class="vi-label">Version ${versions.length - i}</div>
-          <div class="vi-date">${new Date(v.timestamp).toLocaleString()}</div>
-        </div>
-        <button class="vi-restore" onclick="restoreVersion(${versions.length - i - 1})">Restore</button>
-      </div>
-    `).join('') || '<div style="padding:20px; text-align:center; color:var(--text-light);">No versions yet</div>';
-  }
-
-  function closeVersions() {
-    document.getElementById('versionPanel').classList.remove('show');
-  }
-
-  function restoreVersion(idx) {
-    alert('Restore version: ' + idx);
-  }
-
-  function editBlock(idx) {
-    alert('Edit block: ' + idx);
-  }
-
-  function deleteBlock(idx) {
-    if (confirm('Delete this block?')) {
-      const routine = routines.find(r => r.id === activeRoutineId);
-      routine.blocks.splice(idx, 1);
-      localStorage.setItem(ROUTINES_KEY, JSON.stringify(routines));
-      renderHome();
-    }
-  }
-
-  function moveBlock(i, dir) {
-    const routine = routines.find(r => r.id === activeRoutineId);
-    const newIdx = i + dir;
-    if (newIdx >= 0 && newIdx < routine.blocks.length) {
-      [routine.blocks[i], routine.blocks[newIdx]] = [routine.blocks[newIdx], routine.blocks[i]];
-      localStorage.setItem(ROUTINES_KEY, JSON.stringify(routines));
-      renderHome();
-    }
-  }
-
-  function setMode(mode) {
-    currentMode = mode;
-    document.querySelectorAll('.ev-mode-btn').forEach(btn => btn.classList.remove('active'));
-    if (mode === 'card') document.getElementById('btnModeCard').classList.add('active');
-    else document.getElementById('btnModeList').classList.add('active');
-  }
-
-  function isProgressComplete(blockId) {
-    const progress = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
-    return progress[blockId] === true;
-  }
-
-  function markBlockComplete(blockId) {
-    const progress = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
-    progress[blockId] = true;
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
-  }
-
-  function resetProgress() {
-    if (confirm('Reset all progress?')) {
-      localStorage.removeItem(PROGRESS_KEY);
-      renderHome();
-    }
-  }
-
-  // Close modals on overlay click
-  ['exModal','versionPanel','newRoutineModal','blockModal'].forEach(id => {
-    const modal = document.getElementById(id);
-    if (modal) modal.addEventListener('click', e => {
-      if (e.target === modal) modal.classList.remove('show');
-    });
-  });
-
-  function closeExModal() { document.getElementById('exModal').classList.remove('show'); }
-  function saveExModal() { closeExModal(); }
-  function addExerciseField() {}
-
-  loadLibrary();
-  renderLibrary();
-</script>
-</body>
-</html>top-bar" id="topBar"><div class="top-bar-fill" id="topBarFill"></div></div>
-
-<!-- ââââ LIBRARY SCREEN ââââ -->
-<div class="library-screen" id="libraryScreen">
-  <div class="library-header">
-    <h1>My Routines</h1>
-    <div class="subtitle" id="libSubtitle"></div>
-  </div>
-  <div class="library-list" id="libraryList"></div>
-</div>
-
-<!-- ââââ HOME (BLOCKS) SCREEN ââââ -->
-<div class="home-screen" id="homeScreen">
-  <div class="header">
-    <h1 id="routineTitle"></h1>
-    <div class="subtitle" id="homeSubtitle"></div>
-    <div class="header-actions">
-      <button class="hdr-btn" onclick="goLibrary()" title="My Routines" style="font-size:13px">&#9664;</button>
-      <button class="hdr-btn" id="btnEdit" onclick="toggleEditMode()" title="Edit mode">&#9998;</button>
-      <button class="hdr-btn" id="btnVersions" onclick="openVersions()" title="Version history">&#128197;</button>
-    </div>
-  </div>
-  <div class="edit-banner" id="editBanner">EDIT MODE â tap blocks to edit, use arrows to reorder</div>
-  <div class="home" id="blockList"></div>
-  <div id="homeFooter"><div class="reset-bar"><button class="reset-btn" onclick="resetProgress()">Reset progress</button></div></div>
-</div>
-
-<!-- ââââ EXERCISE VIEW ââââ -->
-<div class="exercise-view" id="exerciseView">
-  <div class="ev-top">
-    <button class="ev-back" onclick="goHome()">&#8592;</button>
-    <div class="ev-block-title" id="evTitle"></div>
-    <div class="ev-mode-toggle">
-      <button class="ev-mode-btn active" id="btnModeCard" onclick="setMode('card')">Cards</button>
-      <button class="ev-mode-btn" id="btnModeList" onclick="setMode('list')">List</button>
-    </div>
-  </div>
-  <div class="ev-equip-row" id="evEquipRow"></div>
-  <div class="ev-progress"><div class="ev-progress-fill" id="evProgressFill"></div></div>
-  <div class="ev-progress-text" id="evProgressText"></div>
-  <div class="card-mode" id="cardMode">
-    <div class="ev-card" id="evCard">
-      <div class="step-emoji" id="evEmoji"></div>
-      <div class="step-name" id="evName"></div>
-      <div class="step-detail" id="evDetail"></div>
-      <div class="badge-row" id="evBadges"></div>
-    </div>
-  </div>
-  <div class="list-mode hidden" id="listMode"></div>
-  <div class="ev-nav" id="evNav">
-    <button class="ev-btn ev-btn-prev" id="btnPrev" onclick="prevStep()">Back</button>
-    <button class="ev-btn ev-btn-next" id="btnNext" onclick="nextStep()">Next</button>
-  </div>
-</div>
-
-<!-- ââââ BLOCK EDIT VIEW ââââ -->
-<div class="block-edit-view" id="blockEditView">
-  <div class="be-header">
-    <button class="ev-back" onclick="closeBlockEdit()">&#8592;</button>
-    <input class="be-title-input" id="beTitleInput" placeholder="Block title" />
-  </div>
-  <div class="be-equip-row" id="beEquipRow"></div>
-  <div class="be-exercises" id="beExercises"></div>
-</div>
-
-<!-- ââââ COMPLETION ââââ -->
-<div class="completion-screen" id="completionScreen">
-  <div class="done-icon">&#10024;</div>
-  <h2>Routine Complete</h2>
-  <p>All blocks finished. Beautiful practice.</p>
-  <button class="ev-btn ev-btn-done" onclick="goHome()">Back to Overview</button>
-</div>
-
-<!-- ââââ Edit Exercise Modal ââââ -->
-<div class="modal-overlay" id="exModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Edit Exercise</div>
-    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="exNameInput" /></div>
-    <div class="form-group"><label class="form-label">Details / Cues</label><textarea class="form-input form-textarea" id="exDetailInput"></textarea></div>
-    <div class="form-group"><label class="form-label">Emoji</label><div class="emoji-picker" id="emojiPicker"></div></div>
-    <div class="form-group"><label class="form-label">Badges</label><div class="badge-toggles" id="badgeToggles"></div></div>
-    <div class="modal-actions"><button class="modal-btn modal-btn-cancel" onclick="closeExModal()">Cancel</button><button class="modal-btn modal-btn-save" onclick="saveExModal()">Save</button></div>
-  </div>
-</div>
-
-<!-- ââââ Version History ââââ -->
-<div class="version-panel" id="versionPanel">
-  <div class="version-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Version History</div>
-    <div id="versionList"></div>
-    <div style="margin-top:12px"><button class="modal-btn modal-btn-cancel" onclick="closeVersions()" style="width:100%">Close</button></div>
-  </div>
-</div>
-
-<!-- ââââ New Routine Modal ââââ -->
-<div class="modal-overlay" id="newRoutineModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">New Routine</div>
-    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="newRoutineName" placeholder="e.g., Reformer Basics" /></div>
     <div class="form-group">
       <label class="form-label">Emoji</label>
-      <div class="emoji-picker" id="newRoutineEmojiPicker"></div>
+      <div class="emoji-picker" id="emojiPicker"></div>
     </div>
     <div class="form-group">
-      <label class="form-label">Start from</label>
-      <div id="newRoutineSource" style="display:flex;flex-direction:column;gap:6px"></div>
+      <label class="form-label">Badges</label>
+      <div class="badge-toggles" id="badgeToggles"></div>
     </div>
-    <div class="modal-actions"><button class="modal-btn modal-btn-cancel" onclick="closeNewRoutine()">Cancel</button><button class="modal-btn modal-btn-save" onclick="createNewRoutine()">Create</button></div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="closeExModal()">Cancel</button>
+      <button class="modal-btn modal-btn-save" onclick="saveExModal()">Save</button>
+    </div>
   </div>
 </div>
 
-<!-- ââââ Routine Settings Modal ââââ -->
-<div class="modal-overlay" id="routineSettingsModal">
-  <div class="modal-sheet">
+<!-- Version History -->
+<div class="version-panel" id="versionPanel">
+  <div class="version-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title" id="rsTitle">Routine Options</div>
-    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="rsNameInput" /></div>
-    <div class="form-group"><label class="form-label">Emoji</label><div class="emoji-picker" id="rsEmojiPicker"></div></div>
-    <div class="routine-opts" style="margin-top:16px">
-      <button class="routine-opt-btn" onclick="duplicateRoutine()"><span class="opt-icon">ð</span> Duplicate Routine</button>
-      <button class="routine-opt-btn danger" onclick="deleteRoutine()"><span class="opt-icon">ðï¸</span> Delete Routine</button>
+    <div class="modal-title">Version History</div>
+    <div id="versionList"></div>
+    <div style="margin-top:12px">
+      <button class="modal-btn modal-btn-cancel" onclick="closeVersions()" style="width:100%">Close</button>
     </div>
-    <div class="modal-actions"><button class="modal-btn modal-btn-cancel" onclick="closeRoutineSettings()">Cancel</button><button class="modal-btn modal-btn-save" onclick="saveRoutineSettings()">Save</button></div>
   </div>
 </div>
 
@@ -1283,235 +427,706 @@
 <button class="float-save" id="floatSave" onclick="saveVersion()">Save Version</button>
 
 <script>
-// ââââââââââââââââââââââââââââââââ DEFAULT MAT PILATES ROUTINE ââââââââââââââââââââââââââââââââ
-const DEFAULT_MAT_PILATES = [
-  {id:"warmup",title:"Warm-up",homeEmoji:"ð¸",equipment:[],color:"var(--sage)",colorLight:"var(--sage-light)",steps:[
-    {name:"Seated Cross-Legged",detail:"Hand at heart, hand at belly. Find your breath.",emoji:"ð¸"},
-    {name:"Seated Cat/Cow",detail:"Flow through spinal flexion and extension.",emoji:"ð"},
-    {name:"Rolls L & R",detail:"Gentle lateral rolls, left and right.",emoji:"âï¸"},
-    {name:"Cat/Cow Again",detail:"Repeat the seated cat/cow flow.",emoji:"ð"},
-    {name:"Side Arm Stretch & Twist",detail:"Right and left sides. Open through the chest.",emoji:"ð"}]},
-  {id:"block1",title:"Block 1 Â· Seated Ball Work + Weights",homeEmoji:"ð§",equipment:["ball","weights"],color:"var(--slate)",colorLight:"var(--slate-light)",steps:[
-    {name:"Full Range Curl â Hands at Chest",detail:"Ball behind back, feet flat on mat. Curl up and down through full range.",emoji:"â¨"},
-    {name:"Pulses â Hands at Chest",detail:"Small pulse at the top of the curl.",emoji:"ð¥",isPulse:true},
-    {name:"Full Range â Arms Extended",detail:"Same curl, arms extended out in front.",emoji:"â¨"},
-    {name:"Pulses â Arms Extended",detail:"Pulse with arms extended.",emoji:"ð¥",isPulse:true},
-    {name:"Twist Right â Full Range",detail:"Rotate to the right, full range curl.",emoji:"ð",side:"R"},
-    {name:"Hold Twist + Pulse",detail:"Hold the right twist, pulse.",emoji:"ð¥",isPulse:true,side:"R"},
-    {name:"Add Right Leg Lift + Twist",detail:"Lift right leg as you twist, full range.",emoji:"â¬ï¸",side:"R"},
-    {name:"Pulse â Leg Up, Hold Twist",detail:"Pulse with right leg up, holding the twist.",emoji:"ð¥",isPulse:true,side:"R"},
-    {name:"Extend Arms & Knee in Twist",detail:"Extend both arms and knee while holding the twist.",emoji:"â¨"},
-    {name:"Pulse â Fully Extended",detail:"Pulse with everything extended.",emoji:"ð¥",isPulse:true},
-    {name:"Hold Wide",detail:"Open wide and hold.",emoji:"ð",isHold:true},
-    {name:"Repeat on Left",detail:"Start with center work again, then full left side sequence.",emoji:"ð",isRepeat:true,side:"L"}]},
-  {id:"t1",title:"Transition",homeEmoji:"ð",equipment:["band"],color:"var(--mauve)",colorLight:"var(--mauve-light)",isTransition:true,steps:[
-    {name:"Equipment Swap",detail:"Remove ball, grab band. Band around knees, weights by side.",emoji:"ð",isTransition:true}]},
-  {id:"block2",title:"Block 2 Â· Bridge Series â Band + Weights",homeEmoji:"ð",equipment:["band","weights"],color:"var(--clay)",colorLight:"var(--clay-light)",steps:[
-    {name:"Arms Overhead with Weights",detail:"Extend arms over head holding weights.",emoji:"â¬ï¸"},
-    {name:"Full Range Bridge",detail:"Full range bridge pose â lift and lower.",emoji:"â¨"},
-    {name:"2 Up, 2 Down",detail:"2 counts to lift, 2 counts to lower.",emoji:"ð"},
-    {name:"Pulses",detail:"Pulse at the top of the bridge.",emoji:"ð¥",isPulse:true},
-    {name:"Add Skull Crushers",detail:"Repeat bridge + skull crushers with weights as glutes drop.",emoji:"â¨"},
-    {name:"Hold Weights High",detail:"Lock arms extended, hold weights high.",emoji:"ð",isHold:true},
-    {name:"Knees Push Out on Band",detail:"Press knees out against the band, full range.",emoji:"âï¸"},
-    {name:"Pulses â Knees Out",detail:"Pulse knees out against the band.",emoji:"ð¥",isPulse:true},
-    {name:"Tap R + Lift, Tap L + Lift",detail:"Alternate toe taps with lifts.",emoji:"â¬ï¸"},
-    {name:"Circles Right",detail:"Circle the hips to the right",detail:"Circle the hips to the right, controlled.",emoji:"ðµ"},
-    {name:"Circles Left",detail:"Circle the hips to the left, controlled.",emoji:"ðµ"},
-    {name:"Pulse \u2014 At Top of Bridge",detail:"Pulse with glutes at the top.",emoji:"ð¥",isPulse:true},
-    {name:"High Plank \u2014 Knee Drives + Toe Taps",detail:"Hold high plank. Drive knees in, tap toes.",emoji:"ðª"},
-    {name:"Hold Plank \u2014 Arms Extended",detail:"Extended arms, hold the plank position.",emoji:"ð",isHold:true},
-    {name:"Lower to Push-Up Position",detail:"Lower to push-up position and hold.",emoji:"â¬ï¸"},
-    {name:"Tricep Dips",detail:"3x12 dips holding position.",emoji:"ðª"},
-    {name:"Return to Bridge",detail:"Return to bridge and pulse at top.",emoji:"ð"}]},
-  {id:"t2",title:"Transition",homeEmoji:"ð",equipment:[],color:"var(--mauve)",colorLight:"var(--mauve-light)",isTransition:true,steps:[
-    {name:"Equipment Off",detail:"Remove band and weights. Lie flat on mat.",emoji:"ð",isTransition:true}]},
-  {id:"block3",title:"Block 3 \u00b7 Mat Series",homeEmoji:"ð§",equipment:[],color:"var(--warm)",colorLight:"var(--warm-light)",steps:[
-    {name:"The Hundred",detail:"Pulses with arms lifting, 100 total.",emoji:"ð¯",isPulse:true},
-    {name:"Roll Up",detail:"Slow, controlled roll up from the spine.",emoji:"ð"},
-    {name:"Single Leg Circles",detail:"10 circles each leg, controlled.",emoji:"â­"},
-    {name:"Rolling Like a Ball",detail:"5-8 rolls, massaging the spine.",emoji:"ð¾"},
-    {name:"Single Leg Stretch",detail:"Alternate legs, 10 each side.",emoji:"ð¦µ"},
-    {name:"Double Leg Stretch",detail:"Both legs at once, 10 reps.",emoji:"ð¦µ"},
-    {name:"Straight Leg Stretch",detail:"Both legs straight, pulse 10 times.",emoji:"ð"},
-    {name:"Criss Cross",detail:"Rotation with leg work, 10 each side.",emoji:"â"},
-    {name:"Spine Stretch Forward",detail:"Fold forward and roll back up.",emoji:"ð"},
-    {name:"Saw",detail:"Rotation with forward fold.",emoji:"ðª"},
-    {name:"Swan Prep",detail:"Extension prep, 5 reps.",emoji:"ð¦¢"},
-    {name:"Shoulder Bridge",detail:"Bridge with shoulder support, hold 3 breaths.",emoji:"ð",isHold:true},
-    {name:"Leg Pull Front",detail:"High plank with leg lift, alternate sides.",emoji:"â¬ï¸"},
-    {name:"Leg Pull Back",detail:"Reverse plank with leg lift.",emoji:"â¬ï¸"},
-    {name:"Teaser Prep",detail:"V-sit prep, 5 reps.",emoji:"â¨"},
-    {name:"Seal",detail:"Clap heels together 3 times, 5 reps.",emoji:"ð¦­"}]},
-  {id:"t3",title:"Transition",homeEmoji:"ð",equipment:[],color:"var(--mauve)",colorLight:"var(--mauve-light)",isTransition:true,steps:[
-    {name:"Reset & Breathe",detail:"Lie on back. Return to gentle breathing.",emoji:"ð",isTransition:true}]},
-  {id:"cool",title:"Cool-Down",homeEmoji:"ð",equipment:[],color:"var(--rose)",colorLight:"var(--rose-light)",steps:[
-    {name:"Spinal Twist \u2014 Both Knees",detail:"Hold each side for 3-5 breaths.",emoji:"ð",isHold:true},
-    {name:"Happy Baby",detail:"Hold and breathe into the stretch.",emoji:"ð¶",isHold:true},
-    {name:"Knees to Chest",detail:"Gentle hug of the legs.",emoji:"ð¤",isHold:true},
-    {name:"Corpse Pose",detail:"Full relaxation, 1-2 minutes.",emoji:"ð´",isHold:true,isTransition:false}
-  ]}
+// ââââââââââââââââââââââââââââââââââââ DEFAULT ROUTINE ââââââââââââââââââââââââââââââââââââ
+const DEFAULT_ROUTINE = [
+  {
+    id:"warmup", title:"Warm-up", homeEmoji:"ð¸",
+    equipment:[], color:"var(--sage)", colorLight:"var(--sage-light)",
+    steps:[
+      {name:"Seated Cross-Legged", detail:"Hand at heart, hand at belly. Find your breath.", emoji:"ð¸"},
+      {name:"Seated Cat/Cow", detail:"Flow through spinal flexion and extension.", emoji:"ð"},
+      {name:"Rolls L & R", detail:"Gentle lateral rolls, left and right.", emoji:"âï¸"},
+      {name:"Cat/Cow Again", detail:"Repeat the seated cat/cow flow.", emoji:"ð"},
+      {name:"Side Arm Stretch & Twist", detail:"Right and left sides. Open through the chest.", emoji:"ð¿"}
+    ]
+  },
+  {
+    id:"block1", title:"Block 1 Â· Seated Ball Work + Weights", homeEmoji:"ð§",
+    equipment:["ball","weights"], color:"var(--slate)", colorLight:"var(--slate-light)",
+    steps:[
+      {name:"Full Range Curl â Hands at Chest", detail:"Ball behind back, feet flat on mat. Curl up and down through full range.", emoji:"â¨"},
+      {name:"Pulses â Hands at Chest", detail:"Small pulse at the top of the curl.", emoji:"ð¥", isPulse:true},
+      {name:"Full Range â Arms Extended", detail:"Same curl, arms extended out in front.", emoji:"â¨"},
+      {name:"Pulses â Arms Extended", detail:"Pulse with arms extended.", emoji:"ð¥", isPulse:true},
+      {name:"Twist Right â Full Range", detail:"Rotate to the right, full range curl.", emoji:"ð", side:"R"},
+      {name:"Hold Twist + Pulse", detail:"Hold the right twist, pulse.", emoji:"ð¥", isPulse:true, side:"R"},
+      {name:"Add Right Leg Lift + Twist", detail:"Lift right leg as you twist, full range.", emoji:"â¬ï¸", side:"R"},
+      {name:"Pulse â Leg Up, Hold Twist", detail:"Pulse with right leg up, holding the twist.", emoji:"ð¥", isPulse:true, side:"R"},
+      {name:"Extend Arms & Knee in Twist", detail:"Extend both arms and knee while holding the twist.", emoji:"â¨"},
+      {name:"Pulse â Fully Extended", detail:"Pulse with everything extended.", emoji:"ð¥", isPulse:true},
+      {name:"Hold Wide", detail:"Open wide and hold.", emoji:"ð", isHold:true},
+      {name:"Repeat on Left", detail:"Start with center work again, then full left side sequence.", emoji:"ð", isRepeat:true, side:"L"}
+    ]
+  },
+  {
+    id:"t1", title:"Transition", homeEmoji:"ð",
+    equipment:["band"], color:"var(--mauve)", colorLight:"var(--mauve-light)", isTransition:true,
+    steps:[{name:"Equipment Swap", detail:"Remove ball, grab band. Band around knees, weights by side.", emoji:"ð", isTransition:true}]
+  },
+  {
+    id:"block2", title:"Block 2 Â· Bridge Series â Band + Weights", homeEmoji:"ð",
+    equipment:["band","weights"], color:"var(--clay)", colorLight:"var(--clay-light)",
+    steps:[
+      {name:"Arms Overhead with Weights", detail:"Extend arms over head holding weights.", emoji:"â¬ï¸"},
+      {name:"Full Range Bridge", detail:"Full range bridge pose â lift and lower.", emoji:"â¨"},
+      {name:"2 Up, 2 Down", detail:"2 counts to lift, 2 counts to lower.", emoji:"ð"},
+      {name:"Pulses", detail:"Pulse at the top of the bridge.", emoji:"ð¥", isPulse:true},
+      {name:"Add Skull Crushers", detail:"Repeat bridge + skull crushers with weights as glutes drop.", emoji:"â¨"},
+      {name:"Hold Weights High", detail:"Lock arms extended, hold weights high.", emoji:"ð", isHold:true},
+      {name:"Knees Push Out on Band â Full Range", detail:"Press knees out against the band, full range.", emoji:"âï¸"},
+      {name:"Pulses â Knees Out", detail:"Pulse knees out against the band.", emoji:"ð¥", isPulse:true},
+      {name:"Tap R + Lift, Tap L + Lift", detail:"Alternate toe taps with lifts.", emoji:"â¬ï¸"},
+      {name:"Circles Right", detail:"Circle the hips to the right.", emoji:"ð", side:"R"},
+      {name:"Circles Left", detail:"Circle the hips to the left.", emoji:"ð", side:"L"},
+      {name:"Full Range Bridge", detail:"End with full range bridge.", emoji:"â¨"},
+      {name:"Pulses", detail:"Final bridge pulses.", emoji:"ð¥", isPulse:true},
+      {name:"Hold at Top", detail:"Hold the bridge at the top. Squeeze.", emoji:"ð", isHold:true}
+    ]
+  },
+  {
+    id:"block3", title:"Block 3 Â· Tabletop Glute â Right", homeEmoji:"â¨",
+    equipment:["band","ball"], color:"var(--rose)", colorLight:"var(--rose-light)",
+    steps:[
+      {name:"Setup", detail:"Ball under left hand. Tabletop position.", emoji:"ð"},
+      {name:"Donkey Kicks â Left Leg", detail:"Full range donkey kicks, left leg.", emoji:"â¬ï¸"},
+      {name:"Up an Inch, Down an Inch", detail:"Tiny controlled range at the top.", emoji:"ð"},
+      {name:"Pulses", detail:"Pulse at the top.", emoji:"ð¥", isPulse:true},
+      {name:"Hold Kick + Tricep Pushup", detail:"Hold the kick, tricep pushup with hand on ball. Full range.", emoji:"â¨"},
+      {name:"Tricep Pushup Pulses", detail:"Pulse the tricep pushup.", emoji:"ð¥", isPulse:true},
+      {name:"Extend Arm & Leg", detail:"Extend opposite arm and leg long.", emoji:"â¨"},
+      {name:"Hold + Pulse Back In", detail:"Hold extension, pulse.", emoji:"ð¥", isPulse:true},
+      {name:"Rainbows R & L", detail:"Palm on ball, rainbow the leg right and left.", emoji:"ð"},
+      {name:"Full Range Lift", detail:"Lift the leg through full range.", emoji:"â¬ï¸"},
+      {name:"Pulses", detail:"Pulse the lift.", emoji:"ð¥", isPulse:true},
+      {name:"Elbow to Knee + Extend", detail:"Draw elbow to knee, then extend long.", emoji:"â¨"},
+      {name:"Taps to Corner + Lift", detail:"Tap to corner of mat, lift. End with hold.", emoji:"ð", isHold:true}
+    ]
+  },
+  {
+    id:"block4", title:"Block 4 Â· Standing Glute â Right", homeEmoji:"ð¿",
+    equipment:["band","ball"], color:"var(--slate)", colorLight:"var(--slate-light)",
+    steps:[
+      {name:"Full Range Lunge â Lift & Lower", detail:"Full range lunge with lift/lower + hinge.", emoji:"â¬ï¸"},
+      {name:"Single Pulses", detail:"Pulse in the lunge.", emoji:"ð¥", isPulse:true},
+      {name:"Lift/Lower Front Heel", detail:"Heel raises in lunge position.", emoji:"â¬ï¸"},
+      {name:"Warrior 3 â Tap & Lift", detail:"Hinge to Warrior 3, tap down and lift.", emoji:"â¨"},
+      {name:"Warrior 3 Pulses", detail:"Hold Warrior 3, pulse.", emoji:"ð¥", isPulse:true},
+      {name:"Back to Lunge â Twists", detail:"Return to lunge, full range rotational twists.", emoji:"ð"},
+      {name:"Hold Twist + Pulse", detail:"Hold the twist, pulse.", emoji:"ð¥", isPulse:true},
+      {name:"Flow Sequence", detail:"Lunge â Inhale W3 arms up â Exhale twist â Back to lunge", emoji:"ð", isFlow:true}
+    ]
+  },
+  {
+    id:"t2", title:"Transition", homeEmoji:"ð",
+    equipment:["ball"], color:"var(--mauve)", colorLight:"var(--mauve-light)", isTransition:true,
+    steps:[{name:"To High Plank", detail:"Standing mountain knee drives with ball. Come down to high plank.", emoji:"ð", isTransition:true}]
+  },
+  {
+    id:"block5", title:"Block 5 Â· Core/Arm Series â Both Sides", homeEmoji:"ð",
+    equipment:[], color:"var(--sage)", colorLight:"var(--sage-light)",
+    steps:[
+      {name:"High Plank â Knee Drives + Toe Taps", detail:"x3 each side from high plank.", emoji:"â¨"},
+      {name:"Serve the Platter â Both Arms", detail:"Both arms serve the platter.", emoji:"â¨"},
+      {name:"Alternate Serves R & L", detail:"Alternate right and left arm serves.", emoji:"âï¸"},
+      {name:"Hold Out + Pulse", detail:"Hold arms extended, pulse.", emoji:"ð¥", isPulse:true},
+      {name:"Flip Up & Down", detail:"Flip hands/arms up and down.", emoji:"âï¸"},
+      {name:"Over Under", detail:"Over-under arm pattern.", emoji:"â¨"},
+      {name:"Open Wide", detail:"Repeat series with arms out wide.", emoji:"â¨"},
+      {name:"End with a Hold", detail:"Hold the final position. Breathe.", emoji:"ð", isHold:true}
+    ]
+  },
+  {
+    id:"block6", title:"Block 6 Â· Tabletop Glute â Left", homeEmoji:"â¨",
+    equipment:["band","ball"], color:"var(--rose)", colorLight:"var(--rose-light)",
+    steps:[{name:"Mirror Block 3 â Left Side", detail:"Full tabletop glute series, opposite side. Ball under right hand, donkey kicks with right leg.", emoji:"\uD83D\uDD01", isRepeat:true, side:"L"}]
+  },
+  {
+    id:"block7", title:"Block 7 \u00b7 Standing Glute \u2014 Left", homeEmoji:"\uD83C\uDF3F",
+    equipment:["band","ball"], color:"var(--slate)", colorLight:"var(--slate-light)",
+    steps:[{name:"Mirror Block 4 \u2014 Left Side", detail:"Full standing glute series, opposite side.", emoji:"\uD83D\uDD01", isRepeat:true, side:"L"}]
+  },
+  {
+    id:"t3", title:"Transition", homeEmoji:"\uD83D\uDD04",
+    equipment:[], color:"var(--mauve)", colorLight:"var(--mauve-light)", isTransition:true,
+    steps:[{name:"Side Plank L \u2192 R", detail:"High side plank, left to right. Land on left side.", emoji:"\uD83D\uDD04", isTransition:true}]
+  },
+  {
+    id:"block8", title:"Block 8 \u00b7 Sideline \u2014 Right", homeEmoji:"\uD83C\uDF19",
+    equipment:[], color:"var(--clay)", colorLight:"var(--clay-light)",
+    steps:[
+      {name:"Up for 3, Down Fast", detail:"Slow lift 3 counts, quick lower.", emoji:"\u2B06\uFE0F"},
+      {name:"Up Fast, Down for 3", detail:"Quick lift, slow lower 3 counts.", emoji:"\u2B07\uFE0F"},
+      {name:"Pulses for 8", detail:"8 quick pulses at the top.", emoji:"\uD83D\uDD25", isPulse:true},
+      {name:"Circles Front & Back", detail:"Small circles with top leg, both directions.", emoji:"\uD83C\uDF00"},
+      {name:"Pulses", detail:"Pulse at the top.", emoji:"\uD83D\uDD25", isPulse:true},
+      {name:"Front Leg Extends \u2014 Full Range", detail:"Back leg flat to back of mat. Front leg extends and raises.", emoji:"\u2728"},
+      {name:"Pulses", detail:"Pulse the front leg raises.", emoji:"\uD83D\uDD25", isPulse:true},
+      {name:"Teaser Lifts", detail:"Add teaser lifts.", emoji:"\u2B06\uFE0F"},
+      {name:"Teaser Pulses", detail:"Pulse in the teaser.", emoji:"\uD83D\uDD25", isPulse:true},
+      {name:"Inner Thigh \u2014 Full Range", detail:"Back leg in front of mat. Inner thigh lifts, full range.", emoji:"\u2728"},
+      {name:"Pulses \u2014 Inner Thigh", detail:"Inner thigh pulses.", emoji:"\uD83D\uDD25", isPulse:true},
+      {name:"Circles Front & Back", detail:"Inner thigh circles, both directions.", emoji:"\uD83C\uDF00"},
+      {name:"Swings Forward & Back", detail:"Swing bottom leg forward and back.", emoji:"\u2194\uFE0F"},
+      {name:"Teaser Lifts \u2014 Hold to Finish", detail:"Teaser lifts, hold full teaser to finish.", emoji:"\uD83D\uDC8E", isHold:true}
+    ]
+  },
+  {
+    id:"t4", title:"Transition", homeEmoji:"\uD83D\uDD04",
+    equipment:[], color:"var(--mauve)", colorLight:"var(--mauve-light)", isTransition:true,
+    steps:[{name:"Side Plank L \u2192 R", detail:"High side plank, left to right. Land on right side.", emoji:"\uD83D\uDD04", isTransition:true}]
+  },
+  {
+    id:"block9", title:"Block 9 \u00b7 Sideline \u2014 Left", homeEmoji:"\uD83C\uDF19",
+    equipment:[], color:"var(--clay)", colorLight:"var(--clay-light)",
+    steps:[{name:"Mirror Block 8 \u2014 Left Side", detail:"Full sideline series, opposite side.", emoji:"\uD83D\uDD01", isRepeat:true, side:"L"}]
+  },
+  {
+    id:"block10", title:"Block 10 \u00b7 Final Core & Stretch", homeEmoji:"\uD83E\uDD8B",
+    equipment:[], color:"var(--sage)", colorLight:"var(--sage-light)",
+    steps:[
+      {name:"Hip Lifts \u00d7 8", detail:"8 controlled hip lifts.", emoji:"\u2B06\uFE0F"},
+      {name:"Pulses Up \u00d7 16", detail:"16 pulses lifting up.", emoji:"\uD83D\uDD25", isPulse:true},
+      {name:"Pulses \u2014 Legs Down \u00d7 16", detail:"16 pulses lowering legs.", emoji:"\uD83D\uDD25", isPulse:true},
+      {name:"Low Hold", detail:"Hold low. Engage core. Breathe.", emoji:"\uD83D\uDC8E", isHold:true},
+      {name:"Stretch \u2014 Side Twists", detail:"Gentle side twists to release.", emoji:"\uD83C\uDF00"},
+      {name:"Happy Baby", detail:"Happy baby pose. Let go.", emoji:"\uD83C\uDF38"},
+      {name:"Glute Bridge", detail:"Gentle glute bridge stretch.", emoji:"\u2728"},
+      {name:"Bound Angle", detail:"Bound angle pose. Breathe and release.", emoji:"\uD83E\uDD8B"}
+    ]
+  }
 ];
 
-let routines = [];
-let activeRoutine = null;
-let isEditMode = false;
-let currentScreen = null;
-let currentBlockIdx = -1;
-let currentStepIdx = -1;
-let currentMode = 'card';
+// ââââââââââââââââââââââââââââââââââââ EMOJI PALETTE ââââââââââââââââââââââââââââââââââââ
+const EMOJI_PALETTE = [
+  "\uD83D\uDD25","\uD83D\uDC8E","\u2728","\uD83C\uDF38","\uD83C\uDF3F","\uD83C\uDF51","\uD83C\uDF19","\uD83E\uDD8B","\uD83E\uDEE7","\uD83C\uDF08",
+  "\uD83C\uDF0A","\uD83C\uDF00","\uD83C\uDFAF","\u2B06\uFE0F","\u2B07\uFE0F","\u2194\uFE0F","\uD83D\uDD01","\uD83D\uDD04","\u2764\uFE0F","\u26A1"
+];
 
-function initApp() {
-  loadRoutines();
-  goLibrary();
+const BADGE_OPTIONS = [
+  {key:"isPulse", label:"\uD83D\uDD25 Pulse"},
+  {key:"isHold", label:"\uD83D\uDC8E Hold"},
+  {key:"isFlow", label:"\uD83C\uDF0A Flow"},
+  {key:"isRepeat", label:"\uD83D\uDD01 Repeat"},
+  {key:"isTransition", label:"\uD83D\uDD04 Transition"},
+  {key:"sideR", label:"\u2192 Right"},
+  {key:"sideL", label:"\u2190 Left"}
+];
+
+// ââââââââââââââââââââââââââââââââââââ STATE ââââââââââââââââââââââââââââââââââââ
+let routine = loadRoutine();
+let currentBlockIndex = -1;
+let currentStepIndex = 0;
+let viewMode = 'card';
+let completedBlocks = JSON.parse(localStorage.getItem('mp3') || '{}');
+let editMode = false;
+let hasUnsavedChanges = false;
+let editingBlockIndex = -1;
+let editingExIndex = -1;
+
+// ââââââââââââââââââââââââââââââââââââ LOAD / SAVE ââââââââââââââââââââââââââââââââââââ
+function loadRoutine() {
+  const saved = localStorage.getItem('mp3-routine');
+  if (saved) { try { return JSON.parse(saved); } catch(e) {} }
+  return JSON.parse(JSON.stringify(DEFAULT_ROUTINE));
 }
 
-function loadRoutines() {
-  const stored = localStorage.getItem('routines');
-  routines = stored ? JSON.parse(stored) : [
-    {id:'default-mat',name:'Mat Pilates',emoji:'ð§',blocks:DEFAULT_MAT_PILATES}
-  ];
-  activeRoutine = routines[0];
+function saveRoutineToStorage() {
+  localStorage.setItem('mp3-routine', JSON.stringify(routine));
 }
 
-function saveRoutines() {
-  localStorage.setItem('routines',JSON.stringify(routines));
+function saveVersion() {
+  saveRoutineToStorage();
+  const versions = JSON.parse(localStorage.getItem('mp3-versions') || '[]');
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  const timeStr = now.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+  versions.unshift({
+    date: now.toISOString(),
+    label: dateStr + ' at ' + timeStr,
+    data: JSON.stringify(routine)
+  });
+  if (versions.length > 50) versions.length = 50;
+  localStorage.setItem('mp3-versions', JSON.stringify(versions));
+  hasUnsavedChanges = false;
+  document.getElementById('floatSave').classList.remove('show');
+  showToast('Version saved!');
 }
 
-function goLibrary() {
-  currentScreen = 'library';
-  document.getElementById('libraryScreen').classList.remove('hidden');
-  document.getElementById('homeScreen').classList.remove('active');
-  document.getElementById('exerciseView').classList.remove('active');
-  renderLibrary();
+function restoreVersion(index) {
+  if (index === -1) {
+    routine = JSON.parse(JSON.stringify(DEFAULT_ROUTINE));
+  } else {
+    const versions = JSON.parse(localStorage.getItem('mp3-versions') || '[]');
+    routine = JSON.parse(versions[index].data);
+  }
+  saveRoutineToStorage();
+  hasUnsavedChanges = false;
+  document.getElementById('floatSave').classList.remove('show');
+  closeVersions();
+  renderHome();
+  showToast('Version restored!');
 }
 
-function renderLibrary() {
-  const list = document.getElementById('libraryList');
-  list.innerHTML = routines.map(r => `
-    <div class="routine-card" onclick="selectRoutine('${r.id}')">
-      <div class="routine-icon" style="background:rgba(201,168,124,0.2)">${r.emoji || 'ð§'}</div>
-      <div class="routine-info">
-        <h3>${r.name}</h3>
-        <div class="meta">${r.blocks.length} blocks</div>
-      </div>
-      <div class="routine-actions">
-        <button class="routine-action-btn" onclick="event.stopPropagation();openRoutineSettings('${r.id}')">â¯</button>
-      </div>
-    </div>
-  `).join('') + `
-    <button class="add-routine-btn" onclick="openNewRoutineModal()">+ New Routine</button>
-  `;
+function markChanged() {
+  hasUnsavedChanges = true;
+  document.getElementById('floatSave').classList.add('show');
 }
 
-function selectRoutine(id) {
-  activeRoutine = routines.find(r => r.id === id);
-  goHome();
+// ââââââââââââââââââââââââââââââââââââ TOAST ââââââââââââââââââââââââââââââââââââ
+function showToast(msg) {
+  let t = document.createElement('div');
+  t.textContent = msg;
+  Object.assign(t.style, {
+    position:'fixed', top:'20px', left:'50%', transform:'translateX(-50%)',
+    padding:'10px 20px', background:'var(--accent-dark)', color:'#fff',
+    borderRadius:'10px', fontSize:'13px', fontWeight:'600', zIndex:'300',
+    fontFamily:'inherit', boxShadow:'0 4px 16px rgba(0,0,0,0.15)'
+  });
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 1800);
 }
 
-function goHome() {
-  currentScreen = 'home';
-  currentBlockIdx = -1;
-  currentStepIdx = -1;
-  document.getElementById('libraryScreen').classList.add('hidden');
-  document.getElementById('homeScreen').classList.add('active');
-  document.getElementById('exerciseView').classList.remove('active');
+// ââââââââââââââââââââââââââââââââââââ EQUIPMENT ââââââââââââââââââââââââââââââââââââ
+function equipLabel(e) { return {ball:'Ball', weights:'Weights', band:'Band'}[e]||e; }
+function equipColor(block, e) {
+  return `<span class="equip-tag" style="background:${block.colorLight};color:${block.color}">${equipLabel(e)}</span>`;
+}
+
+// ââââââââââââââââââââââââââââââââââââ RENDER HOME ââââââââââââââââââââââââââââââââââââ
+function renderHome() {
+  const list = document.getElementById('blockList');
+  list.innerHTML = '';
+  const nonTrans = routine.filter(b => !b.isTransition);
+  const sub = document.getElementById('homeSubtitle');
+  sub.textContent = nonTrans.length + ' blocks \u00b7 warm-up \u00b7 finisher';
+
+  routine.forEach((block, i) => {
+    if (block.isTransition && !editMode) return;
+    const card = document.createElement('div');
+    card.className = 'block-card' + (completedBlocks[block.id] ? ' completed' : '');
+    if (block.isTransition) card.style.opacity = '0.6';
+
+    if (editMode) {
+      card.onclick = () => openBlockEdit(i);
+    } else {
+      card.onclick = () => openBlock(i);
+    }
+
+    const steps = block.steps.length;
+    const pulses = block.steps.filter(s => s.isPulse).length;
+    const meta = steps + ' move' + (steps>1?'s':'') + (pulses ? ' \u00b7 ' + pulses + ' pulse set' + (pulses>1?'s':'') : '');
+    const equipHTML = block.equipment.length > 0
+      ? '<div class="equip-tags">' + block.equipment.map(e => equipColor(block, e)).join('') + '</div>' : '';
+
+    card.innerHTML =
+      '<div class="block-icon" style="background:' + block.colorLight + '">' + block.homeEmoji + '</div>' +
+      '<div class="block-info"><h3>' + block.title + '</h3><div class="meta">' + meta + '</div>' + equipHTML + '</div>' +
+      '<span class="arrow">\u203A</span><span class="check">\u2713</span>' +
+      '<div class="edit-controls">' +
+        '<button class="edit-ctrl-btn" onclick="event.stopPropagation();moveBlock(' + i + ',-1)" title="Move up">\u25B2</button>' +
+        '<button class="edit-ctrl-btn" onclick="event.stopPropagation();moveBlock(' + i + ',1)" title="Move down">\u25BC</button>' +
+        '<button class="edit-ctrl-btn del" onclick="event.stopPropagation();deleteBlock(' + i + ')" title="Delete">\u2715</button>' +
+      '</div>';
+    list.appendChild(card);
+  });
+
+  if (editMode) {
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-btn';
+    addBtn.innerHTML = '+ Add Block';
+    addBtn.onclick = () => addBlock();
+    list.appendChild(addBtn);
+  }
+
+  updateTopBar();
+  document.getElementById('homeScreen').classList.toggle('edit-active', editMode);
+}
+
+// ââââââââââââââââââââââââââââââââââââ EDIT MODE TOGGLE ââââââââââââââââââââââââââââââââââââ
+function toggleEditMode() {
+  editMode = !editMode;
+  document.getElementById('btnEdit').classList.toggle('active', editMode);
+  document.getElementById('editBanner').classList.toggle('show', editMode);
+  document.getElementById('topBar').classList.toggle('edit-active', editMode);
+  document.getElementById('homeFooter').style.display = editMode ? 'none' : '';
+  if (!editMode && hasUnsavedChanges) {
+    document.getElementById('floatSave').classList.add('show');
+  }
   renderHome();
 }
 
-function renderHome() {
-  if (!activeRoutine) return goLibrary();
-  document.getElementById('routineTitle').textContent = activeRoutine.name;
-  document.getElementById('homeSubtitle').textContent = activeRoutine.blocks.length + ' blocks';
-  document.getElementById('editBanner').classList.toggle('show', isEditMode);
-  const blockList = document.getElementById('blockList');
-  blockList.innerHTML = activeRoutine.blocks.map((block, i) => {
-    const card = document.createElement('div');
-    card.className = 'block-card' + (block.isTransition ? ' transition' : '') + (isEditMode ? ' edit-active' : '');
-    card.onclick = () => !isEditMode && startBlock(i);
-    card.innerHTML = `
-      <div class="block-icon" style="background:${block.colorLight}">${block.homeEmoji || 'ð·'}</div>
-      <div class="block-info">
-        <h3>${block.title}</h3>
-        <div class="meta">${block.steps.length} steps</div>
-      </div>
-      <span class="arrow">âº</span>
-      ${isEditMode ? '<span class="edit-controls">â â</span>' : ''}
-    `;
-    return card;
-  }).reduce((a, b) => {a.appendChild(b); return a;}, blockList);
+// ââââââââââââââââââââââââââââââââââââ BLOCK OPERATIONS ââââââââââââââââââââââââââââââââââââ
+function moveBlock(index, dir) {
+  const newIdx = index + dir;
+  if (newIdx < 0 || newIdx >= routine.length) return;
+  [routine[index], routine[newIdx]] = [routine[newIdx], routine[index]];
+  markChanged();
+  renderHome();
 }
 
-function startBlock(idx) {
-  currentBlockIdx = idx;
-  currentStepIdx = 0;
-  currentScreen = 'exercise';
-  renderExercise();
+function deleteBlock(index) {
+  if (routine.length <= 1) return;
+  routine.splice(index, 1);
+  markChanged();
+  renderHome();
 }
 
-function renderExercise() {
-  if (!activeRoutine || currentBlockIdx < 0) return;
-  const block = activeRoutine.blocks[currentBlockIdx];
-  const step = block.steps[currentStepIdx];
+function addBlock() {
+  const id = 'block_' + Date.now();
+  routine.push({
+    id: id, title: 'New Block', homeEmoji: 'â¨',
+    equipment: [], color: 'var(--sage)', colorLight: 'var(--sage-light)',
+    steps: [{name: 'New Exercise', detail: 'Add details here', emoji: 'â¨'}]
+  });
+  markChanged();
+  renderHome();
+  openBlockEdit(routine.length - 1);
+}
+
+// ââââââââââââââââââââââââââââââââââââ BLOCK EDIT VIEW ââââââââââââââââââââââââââââââââââââ
+function openBlockEdit(index) {
+  editingBlockIndex = index;
+  const block = routine[index];
+  document.getElementById('homeScreen').classList.add('hidden');
+  document.getElementById('blockEditView').classList.add('active');
+  document.getElementById('beTitleInput').value = block.title;
+
+  // Equipment toggles
+  const equipRow = document.getElementById('beEquipRow');
+  equipRow.innerHTML = '';
+  ['ball','weights','band'].forEach(e => {
+    const chip = document.createElement('button');
+    chip.className = 'be-equip-chip' + (block.equipment.includes(e) ? ' active' : '');
+    chip.textContent = equipLabel(e);
+    chip.onclick = () => {
+      const idx = block.equipment.indexOf(e);
+      if (idx >= 0) block.equipment.splice(idx, 1); else block.equipment.push(e);
+      chip.classList.toggle('active');
+      markChanged();
+    };
+    equipRow.appendChild(chip);
+  });
+
+  renderBlockEditExercises();
+  document.getElementById('floatSave').classList.toggle('show', hasUnsavedChanges);
+}
+
+function renderBlockEditExercises() {
+  const block = routine[editingBlockIndex];
+  const container = document.getElementById('beExercises');
+  container.innerHTML = '';
+
+  block.steps.forEach((step, i) => {
+    const item = document.createElement('div');
+    item.className = 'be-ex-item';
+    item.innerHTML =
+      '<div class="be-ex-emoji">' + (step.emoji || 'â¨') + '</div>' +
+      '<div class="be-ex-info" onclick="openExModal(' + i + ')">' +
+        '<div class="be-ex-name">' + step.name + '</div>' +
+        '<div class="be-ex-detail">' + step.detail + '</div>' +
+      '</div>' +
+      '<div class="be-ex-actions">' +
+        '<button class="edit-ctrl-btn" onclick="moveExercise(' + i + ',-1)">â²</button>' +
+        '<button class="edit-ctrl-btn" onclick="moveExercise(' + i + ',1)">â¼</button>' +
+        '<button class="edit-ctrl-btn del" onclick="deleteExercise(' + i + ')">â</button>' +
+      '</div>';
+    container.appendChild(item);
+  });
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-btn';
+  addBtn.innerHTML = '+ Add Exercise';
+  addBtn.onclick = () => addExercise();
+  container.appendChild(addBtn);
+}
+
+function closeBlockEdit() {
+  const block = routine[editingBlockIndex];
+  const newTitle = document.getElementById('beTitleInput').value.trim();
+  if (newTitle && newTitle !== block.title) { block.title = newTitle; markChanged(); }
+  document.getElementById('blockEditView').classList.remove('active');
+  document.getElementById('homeScreen').classList.remove('hidden');
+  renderHome();
+}
+
+// ââââââââââââââââââââââââââââââââââââ EXERCISE OPERATIONS ââââââââââââââââââââââââââââââââââââ
+function moveExercise(index, dir) {
+  const steps = routine[editingBlockIndex].steps;
+  const newIdx = index + dir;
+  if (newIdx < 0 || newIdx >= steps.length) return;
+  [steps[index], steps[newIdx]] = [steps[newIdx], steps[index]];
+  markChanged();
+  renderBlockEditExercises();
+}
+
+function deleteExercise(index) {
+  const steps = routine[editingBlockIndex].steps;
+  if (steps.length <= 1) return;
+  steps.splice(index, 1);
+  markChanged();
+  renderBlockEditExercises();
+}
+
+function addExercise() {
+  routine[editingBlockIndex].steps.push({name:'New Exercise', detail:'Add details here', emoji:'â¨'});
+  markChanged();
+  renderBlockEditExercises();
+  // Scroll to bottom
+  const container = document.getElementById('beExercises');
+  container.scrollTop = container.scrollHeight;
+}
+
+// ââââââââââââââââââââââââââââââââââââ EXERCISE EDIT MODAL ââââââââââââââââââââââââââââââââââââ
+function openExModal(exIndex) {
+  editingExIndex = exIndex;
+  const step = routine[editingBlockIndex].steps[exIndex];
+  document.getElementById('exModalTitle').textContent = 'Edit Exercise';
+  document.getElementById('exNameInput').value = step.name;
+  document.getElementById('exDetailInput').value = step.detail;
+
+  // Emoji picker
+  const picker = document.getElementById('emojiPicker');
+  picker.innerHTML = '';
+  EMOJI_PALETTE.forEach(em => {
+    const opt = document.createElement('button');
+    opt.className = 'emoji-opt' + (step.emoji === em ? ' selected' : '');
+    opt.textContent = em;
+    opt.onclick = () => {
+      picker.querySelectorAll('.emoji-opt').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+    };
+    picker.appendChild(opt);
+  });
+
+  // Badge toggles
+  const toggles = document.getElementById('badgeToggles');
+  toggles.innerHTML = '';
+  BADGE_OPTIONS.forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = 'badge-toggle';
+    btn.textContent = b.label;
+    btn.dataset.key = b.key;
+    if (b.key === 'sideR' && step.side === 'R') btn.classList.add('active');
+    else if (b.key === 'sideL' && step.side === 'L') btn.classList.add('active');
+    else if (step[b.key]) btn.classList.add('active');
+    btn.onclick = () => {
+      if (b.key === 'sideR' || b.key === 'sideL') {
+        toggles.querySelectorAll('[data-key="sideR"],[data-key="sideL"]').forEach(x => x.classList.remove('active'));
+        if (!btn.classList.contains('active')) btn.classList.add('active');
+      } else {
+        btn.classList.toggle('active');
+      }
+    };
+    toggles.appendChild(btn);
+  });
+
+  document.getElementById('exModal').classList.add('show');
+}
+
+function closeExModal() {
+  document.getElementById('exModal').classList.remove('show');
+}
+
+function saveExModal() {
+  const step = routine[editingBlockIndex].steps[editingExIndex];
+  step.name = document.getElementById('exNameInput').value.trim() || 'Exercise';
+  step.detail = document.getElementById('exDetailInput').value.trim();
+
+  const selected = document.querySelector('#emojiPicker .emoji-opt.selected');
+  if (selected) step.emoji = selected.textContent;
+
+  // Clear old badges
+  step.isPulse = false; step.isHold = false; step.isFlow = false;
+  step.isRepeat = false; step.isTransition = false; delete step.side;
+
+  document.querySelectorAll('#badgeToggles .badge-toggle.active').forEach(btn => {
+    const k = btn.dataset.key;
+    if (k === 'sideR') step.side = 'R';
+    else if (k === 'sideL') step.side = 'L';
+    else step[k] = true;
+  });
+
+  markChanged();
+  closeExModal();
+  renderBlockEditExercises();
+}
+
+// ââââââââââââââââââââââââââââââââââââ VERSION HISTORY ââââââââââââââââââââââââââââââââââââ
+function openVersions() {
+  const versions = JSON.parse(localStorage.getItem('mp3-versions') || '[]');
+  const list = document.getElementById('versionList');
+  list.innerHTML = '';
+
+  // Original base case
+  const origItem = document.createElement('div');
+  origItem.className = 'version-item';
+  origItem.innerHTML =
+    '<div class="vi-info"><div class="vi-label">ð± Original Base Case</div><div class="vi-date">The routine as first created</div></div>' +
+    '<button class="vi-restore" onclick="restoreVersion(-1)">Restore</button>';
+  list.appendChild(origItem);
+
+  versions.forEach((v, i) => {
+    const item = document.createElement('div');
+    item.className = 'version-item';
+    item.innerHTML =
+      '<div class="vi-info"><div class="vi-label">v' + (versions.length - i) + '</div><div class="vi-date">' + v.label + '</div></div>' +
+      '<button class="vi-restore" onclick="restoreVersion(' + i + ')">Restore</button>';
+    list.appendChild(item);
+  });
+
+  if (versions.length === 0) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'text-align:center;padding:20px;color:var(--text-light);font-size:13px;';
+    empty.textContent = 'No saved versions yet. Use Edit Mode to make changes, then save.';
+    list.insertBefore(empty, list.children[1] || null);
+  }
+
+  document.getElementById('versionPanel').classList.add('show');
+}
+
+function closeVersions() {
+  document.getElementById('versionPanel').classList.remove('show');
+}
+
+// ââââââââââââââââââââââââââââââââââââ PRACTICE MODE ââââââââââââââââââââââââââââââââââââ
+function openBlock(index) {
+  currentBlockIndex = index; currentStepIndex = 0;
+  document.getElementById('homeScreen').classList.add('hidden');
   document.getElementById('exerciseView').classList.add('active');
+  document.getElementById('completionScreen').classList.remove('active');
+  renderBlock();
+}
+
+function renderBlock() {
+  const block = routine[currentBlockIndex];
   document.getElementById('evTitle').textContent = block.title;
-  document.getElementById('evEmoji').textContent = step.emoji;
+  const equipRow = document.getElementById('evEquipRow');
+  if (block.equipment.length) {
+    equipRow.innerHTML = block.equipment.map(e => equipColor(block, e)).join('');
+    equipRow.style.display = 'flex';
+  } else { equipRow.style.display = 'none'; }
+  renderStep(); renderList(); setMode(viewMode);
+}
+
+function renderStep() {
+  const block = routine[currentBlockIndex];
+  const step = block.steps[currentStepIndex];
+  const total = block.steps.length;
+
+  document.getElementById('evProgressFill').style.width = ((currentStepIndex+1)/total*100)+'%';
+  document.getElementById('evProgressText').textContent = (currentStepIndex+1)+' of '+total;
+
+  const card = document.getElementById('evCard');
+  card.style.animation='none'; card.offsetHeight; card.style.animation='fadeIn 0.25s ease';
+
+  document.getElementById('evEmoji').textContent = step.emoji || 'â¨';
   document.getElementById('evName').textContent = step.name;
   document.getElementById('evDetail').textContent = step.detail;
-  const pct = ((currentStepIdx + 1) / block.steps.length) * 100;
-  document.getElementById('evProgressFill').style.width = pct + '%';
-  document.getElementById('evProgressText').textContent = (currentStepIdx + 1) + ' / ' + block.steps.length;
-  document.getElementById('btnPrev').disabled = currentStepIdx === 0 && currentBlockIdx === 0;
-  document.getElementById('btnNext').disabled = currentStepIdx === block.steps.length - 1 && currentBlockIdx === activeRoutine.blocks.length - 1;
+
+  let badges = '';
+  if (step.isPulse) badges += '<span class="badge badge-pulse">ð¥ 60â80 pulses</span>';
+  if (step.isHold && !step.isPulse) badges += '<span class="badge badge-hold">ð Hold</span>';
+  if (step.isTransition) badges += '<span class="badge badge-transition">â Transition</span>';
+  if (step.isRepeat) badges += '<span class="badge badge-repeat">ð Mirror/Repeat</span>';
+  if (step.isFlow) badges += '<span class="badge badge-flow">ð Flow</span>';
+  if (step.side) badges += '<span class="badge badge-side">'+(step.side==='L'?'â Left':'â Right')+'</span>';
+  document.getElementById('evBadges').innerHTML = badges;
+
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  btnPrev.disabled = (currentStepIndex===0 && currentBlockIndex===0);
+  const isLast = currentStepIndex === total-1;
+  const noMore = !routine[currentBlockIndex+1];
+  if (isLast && noMore) { btnNext.textContent='Finish â¨'; btnNext.className='ev-btn ev-btn-done'; }
+  else if (isLast) { btnNext.textContent='Next Block â'; btnNext.className='ev-btn ev-btn-next'; }
+  else { btnNext.textContent='Next â'; btnNext.className='ev-btn ev-btn-next'; }
+}
+
+function renderList() {
+  const block = routine[currentBlockIndex];
+  const listEl = document.getElementById('listMode');
+  listEl.innerHTML = '';
+  block.steps.forEach((step, i) => {
+    const cls = ['list-item'];
+    if (step.isPulse) cls.push('is-pulse');
+    if (step.isHold) cls.push('is-hold');
+    if (step.isRepeat) cls.push('is-repeat');
+    if (step.isTransition) cls.push('is-transition');
+    let badges = '';
+    if (step.isPulse) badges += '<span class="badge badge-pulse">ð¥ 60â80 pulses</span>';
+    if (step.isHold && !step.isPulse) badges += '<span class="badge badge-hold">ð Hold</span>';
+    if (step.isRepeat) badges += '<span class="badge badge-repeat">ð Mirror</span>';
+    if (step.isFlow) badges += '<span class="badge badge-flow">ð Flow</span>';
+    if (step.side) badges += '<span class="badge badge-side">'+(step.side==='L'?'â L':'â R')+'</span>';
+    const item = document.createElement('div');
+    item.className = cls.join(' ');
+    item.innerHTML =
+      '<div class="list-num">'+(i+1)+'</div>' +
+      '<div class="list-content"><div class="list-name">'+step.name+'</div><div class="list-detail">'+step.detail+'</div>' +
+      (badges?'<div class="list-badges">'+badges+'</div>':'') + '</div>' +
+      '<div class="list-emoji">'+(step.emoji||'')+'</div>';
+    listEl.appendChild(item);
+  });
+}
+
+function setMode(mode) {
+  viewMode = mode;
+  document.getElementById('cardMode').classList.toggle('hidden', mode!=='card');
+  document.getElementById('listMode').classList.toggle('hidden', mode!=='list');
+  document.getElementById('evNav').style.display = mode==='card'?'flex':'none';
+  document.getElementById('btnModeCard').classList.toggle('active', mode==='card');
+  document.getElementById('btnModeList').classList.toggle('active', mode==='list');
 }
 
 function nextStep() {
-  const block = activeRoutine.blocks[currentBlockIdx];
-  if (currentStepIdx < block.steps.length - 1) {
-    currentStepIdx++;
-  } else if (currentBlockIdx < activeRoutine.blocks.length - 1) {
-    currentBlockIdx++;
-    currentStepIdx = 0;
-  } else {
-    document.getElementById('completionScreen').style.display = 'flex';
-    setTimeout(() => goHome(), 1800);
-    return;
+  const block = routine[currentBlockIndex];
+  if (currentStepIndex < block.steps.length-1) { currentStepIndex++; renderStep(); }
+  else {
+    completedBlocks[block.id] = true;
+    localStorage.setItem('mp3', JSON.stringify(completedBlocks));
+    const next = currentBlockIndex+1;
+    if (next < routine.length) { openBlock(next); }
+    else {
+      document.getElementById('exerciseView').classList.remove('active');
+      document.getElementById('completionScreen').classList.add('active');
+    }
   }
-  renderExercise();
+  updateTopBar();
 }
 
 function prevStep() {
-  if (currentStepIdx > 0) currentStepIdx--;
-  else if (currentBlockIdx > 0) {
-    currentBlockIdx--;
-    currentStepIdx = activeRoutine.blocks[currentBlockIdx].steps.length - 1;
+  if (currentStepIndex > 0) { currentStepIndex--; renderStep(); }
+  else if (currentBlockIndex > 0) {
+    currentBlockIndex--;
+    currentStepIndex = routine[currentBlockIndex].steps.length-1;
+    renderBlock();
   }
-  renderExercise();
 }
 
-function goHome() { currentScreen = 'home'; goHome(); }
-function toggleEditMode() { isEditMode = !isEditMode; renderHome(); }
-function setMode(m) { currentMode = m; document.querySelectorAll('.ev-mode-btn').forEach(b => b.classList.remove('active')); document.getElementById(m === 'card' ? 'btnModeCard' : 'btnModeList').classList.add('active'); }
-function openVersions() { document.getElementById('versionPanel').classList.add('show'); }
-function closeVersions() { document.getElementById('versionPanel').classList.remove('show'); }
-function openNewRoutineModal() { document.getElementById('newRoutineModal').classList.add('show'); }
-function closeNewRoutine() { document.getElementById('newRoutineModal').classList.remove('show'); }
-function createNewRoutine() { closeNewRoutine(); }
-function openRoutineSettings(id) { document.getElementById('routineSettingsModal').classList.add('show'); }
-function closeRoutineSettings() { document.getElementById('routineSettingsModal').classList.remove('show'); }
-function saveRoutineSettings() { closeRoutineSettings(); }
-function duplicateRoutine() {}
-function deleteRoutine() {}
-function resetProgress() { if (confirm('Reset?')) location.reload(); }
-function saveVersion() {}
-function closeExModal() { document.getElementById('exModal').classList.remove('show'); }
-function saveExModal() { closeExModal(); }
-function closeBlockEdit() {}
-function addExerciseField() {}
+function goHome() {
+  document.getElementById('exerciseView').classList.remove('active');
+  document.getElementById('completionScreen').classList.remove('active');
+  document.getElementById('homeScreen').classList.remove('hidden');
+  renderHome();
+}
 
-initApp();
-loadLibrary();
-renderLibrary();
+function resetAll() {
+  completedBlocks = {};
+  localStorage.setItem('mp3', '{}');
+  renderHome();
+}
+
+function updateTopBar() {
+  const total = routine.filter(b => !b.isTransition).length;
+  const done = routine.filter(b => !b.isTransition && completedBlocks[b.id]).length;
+  document.getElementById('topBarFill').style.width = (done/total*100)+'%';
+}
+
+// Close modals on overlay click
+document.getElementById('exModal').onclick = function(e) { if (e.target === this) closeExModal(); };
+document.getElementById('versionPanel').onclick = function(e) { if (e.target === this) closeVersions(); };
+
+renderHome();
 </script>
 </body>
 </html>
